@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="javascript/generation_mots.js"></script>
     <title>Projet HTML</title>
 </head>
 <body>
-    <div>
-        <p>Points : x</p>
+    <div id="affichage_points">
+        <p id="points">Points : x</p>
     </div>
-    <div>
+    <div id="affichage_mots">
         <p>Apparition des mots</p>
-        <p>...</p>
+        <p id="liste_mots">...</p>
     </div>
     <input id="mot" type="text" placeholder="test">
-    <input id="duree" type="text" placeholder="1">
-    <input id="longueur" type="text" placeholder="8">
+    <input id="duree" type="text" placeholder="1" value="4">
+    <input id="longueur" type="text" placeholder="8" value="12">
     <button id="acceleration">Accélerer</button>
 </body>
 </html>
