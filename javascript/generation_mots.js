@@ -1,40 +1,58 @@
+var compteur = 0;
+const wordToTypeList = [];
+
 window.onload = function () {
     const words = fetch('../words.json').then(words => words.json());
     const maxLength = document.getElementById('longueur')
-    const wordToType = document.getElementById('liste_mots');
+    const wordToTypeDiv = document.getElementById('liste_mots');
     
     const mot = document.getElementById('mot');
     var score = document.getElementById('points');
     mot.addEventListener('input', checkMot);
-    genererateWords(words, maxLength, wordToType);
+    genererateWords(words, maxLength,wordToTypeDiv);
+    
 }
 
-async function genererateWords(wordsPromise, maxLength, wordListToAdd) {
+async function genererateWords(wordsPromise, maxLength, div) {
+    const maxMots = 10;
+
     const words = await wordsPromise;
-    while (true) {
+    while (compteur < maxMots) {
         const randomWord = generateRandomWord(maxLength, words);
-        wordListToAdd.textContent += " " + randomWord;
+        wordToTypeList.push(randomWord);
+        displayWords(div);
+        console.log(wordToTypeList);
         await sleep(2000);
-        console.log(wordListToAdd);
+        compteur ++;
     }
+}
+
+function displayWords(div){
+    div.textContent = "";
+    wordToTypeList.forEach(mot => {
+        div.textContent += " " + mot;
+    });
 }
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-var mots = ['test', 'jouer','piscine'];
-
 function checkMot() {
     motDansTableau(mot.value);
 }
 
 function motDansTableau(mot) {
-    if(mots.includes(mot)){
+    if(wordToTypeList.includes(mot)){
         addScore(mot);
-        var indexMot = mots.indexOf(mot);
-        mots.splice(indexMot, 1);
-        console.log(mots);
+        const indexMot = wordToTypeList.indexOf(mot);
+        wordToTypeList.splice(indexMot, 1);
+        const wordToTypeDiv = document.getElementById('liste_mots');
+        displayWords(wordToTypeDiv);
+        console.log(wordToTypeList);
+        const mot2 = document.getElementById('mot');
+        mot2.value = "";
+        compteur --;
     } else {
     }
 }
