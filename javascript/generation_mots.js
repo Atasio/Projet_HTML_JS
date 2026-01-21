@@ -8,13 +8,14 @@ window.onload = function () {
     
     const mot = document.getElementById('mot');
     var score = document.getElementById('points');
+    var dureeApparition = document.getElementById('duree');
     mot.addEventListener('input', checkMot);
-    genererateWords(words, maxLength,wordToTypeDiv);
+    genererateWords(words, maxLength,wordToTypeDiv, dureeApparition);
     
 }
 
-async function genererateWords(wordsPromise, maxLength, div) {
-    const maxMots = 10;
+async function genererateWords(wordsPromise, maxLength, div, dureeApparition) {
+    const maxMots = 150;
 
     const words = await wordsPromise;
     while (compteur < maxMots) {
@@ -22,7 +23,7 @@ async function genererateWords(wordsPromise, maxLength, div) {
         wordToTypeList.push(randomWord);
         displayWords(div);
         console.log(wordToTypeList);
-        await sleep(2000);
+        await sleep(dureeApparition.value*1000);
         compteur ++;
     }
 }
