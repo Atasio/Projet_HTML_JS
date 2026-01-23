@@ -1,5 +1,6 @@
 {
   "name": "projet",
+  "type" : "module",
   "version": "1.0.0",
   "description": "Pour lancer le serveur web :  ``` python -m http.server 8000  ```",
   "main": "index.js",
