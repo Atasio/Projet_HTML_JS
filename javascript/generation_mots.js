@@ -110,6 +110,7 @@ function restartGame() {
 }
 
 // === WORD SPAWNING ===
+//TODO passer le word en parametre
 function spawnWord() {
     const word = getRandomWord();
     const wordId = `word-${Date.now()}-${Math.random()}`;

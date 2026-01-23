@@ -1,24 +1,15 @@
-import express from "express"
-import { createServer } from "http"
-import { Server } from "socket.io"
+import express from 'express'
+import { createServer } from 'http'
+import { initIO } from './src/io.js'
 
 const app = express()
 const httpServer = createServer(app)
 
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*"
-  }
-})
+// Ici tu peux mettre des routes REST si besoin
+app.get('/', (req, res) => res.send('Server OK'))
 
-io.on("connection", (socket) => {
-  console.log("Player connected", socket.id)
+// Initialise Socket.io et injecte le serveur HTTP
+initIO(httpServer)
 
-  socket.on("disconnect", () => {
-    console.log("Player disconnected", socket.id)
-  })
-})
+httpServer.listen(3000, () => console.log('Server running on port 3000'))
 
-httpServer.listen(3000, () => {
-  console.log("Server running on port 3000")
-})

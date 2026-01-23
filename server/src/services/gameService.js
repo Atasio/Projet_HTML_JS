@@ -1,7 +1,3 @@
-import { EventEmitter } from "node:stream";
-
-const gameEvents = new EventEmitter();
-
 const gameState = {
     score: 0,
     combo: 1,
@@ -17,14 +13,16 @@ const gameState = {
     }
 };
 
-let wordsList = [];
-let spawnInterval = null;
-
 function startGame() {
     gameState.isGameActive = true;
     gameState.gameStartTime = Date.now();
     startSpawning();
 }
+
+// === WORD MANAGEMENT ===
+let wordsList = [];
+let spawnInterval = null;
+
 
 async function loadWords() {
     const response = await fetch('../words.json');
