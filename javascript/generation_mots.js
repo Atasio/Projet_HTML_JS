@@ -1,36 +1,16 @@
-// === GAME STATE ===
-const gameState = {
-    score: 0,
-    combo: 1,
-    wordsTyped: 0,
-    maxWords: 100,
-    fallingWords: [],
-    gameStartTime: null,
-    isGameActive: false,
-    settings: {
-        speed: 5,
-        maxLength: 12,
-        spawnRate: 2
-    }
-};
-
-// === WORD MANAGEMENT ===
-let wordsList = [];
-let spawnInterval = null;
 
 // === CANVAS & PARTICLES ===
 const particles = [];
 let canvas, ctx;
 
 // === INITIALIZATION ===
-window.onload = async function() {
+window.addEventListener("load", async () => {
     initCanvas();
     initControls();
-    loadWords();
     startGame();
     setupInputListener();
     animateParticles();
-};
+});
 
 // === CANVAS SETUP ===
 function initCanvas() {
@@ -45,16 +25,6 @@ function resizeCanvas() {
     canvas.height = window.innerHeight;
 }
 
-// === LOAD WORDS ===
-async function loadWords() {
-    const response = await fetch('../words.json');
-    if (!response.ok) {
-        // Fallback words si le fichier n'existe pas
-        wordsList = generateFallbackWords();
-    } else {
-        wordsList = await response.json();
-    }
-}
 
 // === CONTROLS ===
 function initControls() {
@@ -83,12 +53,30 @@ function initControls() {
     restartBtn.addEventListener('click', restartGame);
 }
 
+function setupInputListener() {
+    const input = document.getElementById('word-input');
+    
+    input.addEventListener('input', (e) => {
+        const typedWord = e.target.value.trim().toLowerCase();
+        console.log(typedWord);
+        if (typedWord === '') return;
+        
+        // Check if word matches any falling word
+        const matchedWord = gameState.fallingWords.find(
+            word => word.text.toLowerCase() === typedWord
+        );
+        
+        if (matchedWord) {
+            // Word matched!
+            handleWordMatch(matchedWord);
+            input.value = '';
+        }
+    });
+}
+
 // === GAME CONTROL ===
 function startGame() {
-    gameState.isGameActive = true;
-    gameState.gameStartTime = Date.now();
     updateTimer();
-    startSpawning();
     document.getElementById('word-input').focus();
 }
 
@@ -121,37 +109,6 @@ function restartGame() {
     restartSpawnInterval();
 }
 
-function startSpawning() {
-    spawnInterval = setInterval(() => {
-        if (gameState.wordsTyped < gameState.maxWords && gameState.isGameActive) {
-            spawnWord();
-        } else if (gameState.wordsTyped >= gameState.maxWords) {
-            endGame();
-        }
-    }, gameState.settings.spawnRate * 1000);
-}
-
-function restartSpawnInterval() {
-    if (spawnInterval) {
-        clearInterval(spawnInterval);
-    }
-    startSpawning();
-}
-
-function endGame() {
-    gameState.isGameActive = false;
-    clearInterval(spawnInterval);
-    
-    // Stop falling words
-    gameState.fallingWords.forEach(word => {
-        if (word.animationId) {
-            cancelAnimationFrame(word.animationId);
-        }
-    });
-    
-    alert(`Partie terminée!\nScore final: ${gameState.score}\nMots tapés: ${gameState.wordsTyped}/${gameState.maxWords}`);
-}
-
 // === WORD SPAWNING ===
 function spawnWord() {
     const word = getRandomWord();
@@ -182,15 +139,6 @@ function spawnWord() {
     animateWord(wordObj);
 }
 
-function getRandomWord() {
-    const filteredWords = wordsList.filter(
-        word => word.length <= gameState.settings.maxLength
-    );
-        
-    const randomIndex = Math.floor(Math.random() * filteredWords.length);
-    return filteredWords[randomIndex];
-}
-// -------------------------------------------------------------------------------------------------------------------------------------
 // === WORD ANIMATION ===
 function animateWord(wordObj) {
     const animate = () => {
@@ -215,65 +163,6 @@ function animateWord(wordObj) {
     };
     
     animate();
-}
-// -------------------------------------------------------------------------------------------------------------------------------------
-
-// === INPUT HANDLING ===
-function setupInputListener() {
-    const input = document.getElementById('word-input');
-    
-    input.addEventListener('input', (e) => {
-        const typedWord = e.target.value.trim().toLowerCase();
-        
-        if (typedWord === '') return;
-        
-        // Check if word matches any falling word
-        const matchedWord = gameState.fallingWords.find(
-            word => word.text.toLowerCase() === typedWord
-        );
-        
-        if (matchedWord) {
-            // Word matched!
-            handleWordMatch(matchedWord);
-            input.value = '';
-        }
-    });
-}
-
-// === WORD MATCH ===
-function handleWordMatch(wordObj) {
-    const element = wordObj.element;
-    
-    // Visual feedback
-    element.classList.add('matched');
-    
-    // Calculate score
-    const baseScore = wordObj.text.length * 3;
-    const scoreWithCombo = baseScore * gameState.combo;
-    gameState.score += scoreWithCombo;
-    
-    // -------------------------------------------------------------------------------------------------------------------------------------
-    // Show score popup
-    showScorePopup(scoreWithCombo, wordObj.x, wordObj.y);
-    
-    // Create particles
-    createParticles(wordObj.x + element.offsetWidth / 2, wordObj.y + element.offsetHeight / 2);
-    // -------------------------------------------------------------------------------------------------------------------------------------
-
-    // Update combo
-    gameState.combo = Math.min(gameState.combo + 0.5, 5);
-    updateCombo();
-    
-    // Update stats
-    gameState.wordsTyped++;
-    updateScore();
-    updateProgress();
-    
-    // Remove word with animation
-    setTimeout(() => {
-        element.classList.add('destroying');
-        setTimeout(() => removeWord(wordObj.id, true), 500);
-    }, 100);
 }
 
 // === UI UPDATES ===
@@ -389,7 +278,7 @@ function animateParticles() {
 // -------------------------------------------------------------------------------------------------------------------------------------
 
 // === UTILITIES ===
-function removeWord(wordId, wasTyped) {
+function removeWord(wordId) {
     const index = gameState.fallingWords.findIndex(w => w.id === wordId);    
     const wordObj = gameState.fallingWords[index];
     
