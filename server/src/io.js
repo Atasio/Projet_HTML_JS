@@ -16,8 +16,9 @@ function initIO(httpServer) {
       let room = roomService.getRoomFromPlayer(socket.id);
       if (!room) {
         room = createRoom(socket);
+        socket.join(room.roomId);
+        sendRoom(room);
       }
-      socket.join(room.roomId);
       gameService.startGame(room.roomId, room.gameState);
       console.log('Game started by', socket.id)
     })
@@ -40,9 +41,12 @@ function initIO(httpServer) {
     })
 
     socket.on('createRoom', () => {
-      createRoom(socket.id);
-      const room = roomService.getRoomFromPlayer(socket.id);
+      console.log('Creating room for', socket.id);
+      const room = createRoom(socket.id);
       socket.join(room.roomId);
+      sendRoom(room);
+
+
     })
 
     socket.on('joinRoom', (codeId) => {
@@ -61,9 +65,8 @@ function initIO(httpServer) {
 }
 
 function createRoom(socketId){
-  const room = roomService.createRoom(socketId);
-  sendRoom(room);
-  return room
+  return roomService.createRoom(socketId);
+
 }
 
 function sendRoom(room) {

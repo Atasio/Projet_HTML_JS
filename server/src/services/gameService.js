@@ -2,12 +2,12 @@ import wordsService from "./wordsService.js";
 import  io from "../io.js";
 
 // === GAME LIFECYCLE ===
-function startGame(roomId, gameState) {
+function startGame(roomdId, gameState) {
     loadWords();
     gameState.isGameActive = true;
     gameState.gameStartTime = Date.now();
     console.log("Game started at", gameState.gameStartTime);
-    startSpawning(gameState);
+    startSpawning(roomdId, gameState);
 }
 
 function createGameState(){

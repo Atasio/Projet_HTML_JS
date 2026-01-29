@@ -1,6 +1,8 @@
 import { io } from "https://cdn.socket.io/4.8.1/socket.io.esm.min.js";
 import gameWordHandler from "./gameWordHandler.js";
 import { gameState } from "./gameState.js";
+import { roomState } from "./roomState.js";
+import createRoom from "./createRoom.js";
 
 const socket = io("http://localhost:3000")
 
@@ -30,10 +32,24 @@ socket.on("updateGameState", (score, combo, wordsTyped) => {
 })
 
 socket.on("roomCreated", (room) => {
-  console.log("Room created :", room);
+  log(`Room created with codeId: ${room.codeId}`);
+  console.log("Room data:", room);
+  roomState.codeId = room.codeId;
+  roomState.roomId = room.roomId;
+  roomState.players = room.players;
+  gameState.combo = room.gameState.combo;
+  gameState.score = room.gameState.score;
+  gameState.wordsTyped = room.gameState.wordsTyped;
+  gameState.maxWords = room.gameState.maxWords;
+  gameState.isGameActive = room.gameState.isGameActive;
+  gameState.settings = room.gameState.settings;
+  createRoom.displayRoomCode(room.codeId);
   //window.location.href = `../multiplayer.html?codeId=${room.codeId}`;
 });
 
+function log(message) {
+  console.log(message);
+}
 function sendWordCompleted(wordId, typedWord) {
   socket.emit("wordCompleted", wordId, typedWord);
 }
@@ -44,6 +60,7 @@ function sendStartGame() {
 }
 
 function sendCreateRoom() {
+  console.log("send : createRoom")
   socket.emit("createRoom");
 }
 
