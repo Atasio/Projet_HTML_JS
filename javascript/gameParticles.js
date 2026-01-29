@@ -2,7 +2,8 @@ const particles = [];
 let ctx, canvas;
 
 canvas = document.getElementById('particles');
-ctx = canvas.getContext('2d');
+if (canvas)
+    ctx = canvas.getContext('2d');
 
 function createParticles(x, y) {
     const colors = ['#667eea', '#764ba2', '#ffd700', '#ffffff'];
