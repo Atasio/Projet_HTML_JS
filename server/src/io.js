@@ -1,7 +1,6 @@
 import { Server } from 'socket.io'
 import gameService from './services/gameService.js'
 import roomService from './services/roomService.js'
-import { clear } from 'console'
 
 let io
 
@@ -16,9 +15,10 @@ function initIO(httpServer) {
     socket.on('startGame', () => {
       let room = roomService.getRoomFromPlayer(socket.id);
       if (!room) {
-        room = roomService.createRoom(socket.id);
+        room = createRoom(socket);
       }
-      gameService.startGame(room.gameState);
+      socket.join(room.roomId);
+      gameService.startGame(room.roomId, room.gameState);
       console.log('Game started by', socket.id)
     })
 
@@ -34,26 +34,51 @@ function initIO(httpServer) {
       }
     })
     socket.on('disconnect', () => {
+
       roomService.leaveRoom(socket.id);
       console.log('Player disconnected', socket.id)
     })
 
     socket.on('createRoom', () => {
-      const room = roomService.createRoom(socket.id);
-      console.log('Room created:', room);
-      socket.emit('roomCreated', { room: room });
+      createRoom(socket.id);
+      const room = roomService.getRoomFromPlayer(socket.id);
+      socket.join(room.roomId);
+    })
+
+    socket.on('joinRoom', (codeId) => {
+      const success = roomService.joinRoom(codeId, socket.id);
+      if (success) {
+        const room = roomService.getRoomFromPlayer(socket.id);
+        socket.join(room.roomId);
+        io.to(room.roomId).emit('roomJoined', { room: room });
+        console.log(`Player ${socket.id} joined room ${codeId}`);
+      } else {
+        socket.emit('error', 'Room not found');
+        console.log(`Player ${socket.id} failed to join room ${codeId}`);
+      }
     })
   })
 }
 
-function sendSpawnWord(word) {
-  console.log('Sending spawnWord:', word);
-  io.emit('spawnWord', word)
+function createRoom(socketId){
+  const room = roomService.createRoom(socketId);
+  sendRoom(room);
+  return room
 }
 
-function sendUpdateGameState(score, combo, wordsTyped) {
+function sendRoom(room) {
+  const roomClientData = roomService.mapToClientData(room);
+  io.to(room.roomId).emit('roomCreated', roomClientData);
+}
+
+function sendSpawnWord(roomId, word) {
+  console.log('Sending spawnWord:', word);
+  io.to(roomId).emit('spawnWord', word)
+}
+
+function sendUpdateGameState(roomId, score, combo, wordsTyped) {
   console.log('Updating gameState:', { score, combo, wordsTyped });
-  io.emit('updateGameState', score, combo, wordsTyped)
+  io.to(roomId).emit('updateGameState', score, combo, wordsTyped)
 }
 
 export default { initIO, sendSpawnWord, sendUpdateGameState }

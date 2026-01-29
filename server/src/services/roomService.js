@@ -24,19 +24,32 @@ function joinRoom(codeId, socketId) {
     return false;
 }
 
-function leaveRoom(codeId, socketId) {
-    if (rooms[codeId]) {
-        const index = rooms[codeId].players.indexOf(socketId);
-        if (index !== -1) {
-            rooms[codeId].players.splice(index, 1);
-            return true;
-        }
-        if (rooms[codeId].players.length === 0) {
-            gameService.endGame(rooms[codeId].gameState);
-            delete rooms[codeId];
+function leaveRoom(socketId) {
+    const room = getRoomFromPlayer(socketId);
+    if (room) {
+        room.players = room.players.filter(id => id !== socketId);
+        // Si la room est vide, on la supprime
+        if (room.players.length === 0) {
+            clearInterval(room.gameState.spawnInterval);
+            delete rooms[room.roomId];
         }
     }
-    return false;
+}
+
+function mapToClientData(room) {
+    return {
+        roomId: room.roomId,
+        codeId: room.codeId,
+        players: room.players.length,
+        gameState: {
+            score: room.gameState.score,
+            combo: room.gameState.combo,
+            wordsTyped: room.gameState.wordsTyped,
+            maxWords: room.gameState.maxWords,
+            isGameActive: room.gameState.isGameActive,
+            settings: room.gameState.settings
+        }
+    };
 }
 
 function generateUniqueRoomId() {
@@ -79,5 +92,6 @@ export default {
     leaveRoom,
     getRoomId,
     getRoomCodeId,
-    getRoomFromPlayer
+    getRoomFromPlayer,
+    mapToClientData,
 };

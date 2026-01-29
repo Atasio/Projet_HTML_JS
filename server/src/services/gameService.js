@@ -2,11 +2,11 @@ import wordsService from "./wordsService.js";
 import  io from "../io.js";
 
 // === GAME LIFECYCLE ===
-function startGame(gameState) {
+function startGame(roomId, gameState) {
     loadWords();
     gameState.isGameActive = true;
     gameState.gameStartTime = Date.now();
-    startSpawning(gameState);
+    startSpawning(roomId, gameState);
 }
 
 function createGameState(){
@@ -38,17 +38,17 @@ async function loadWords() {
     }
 }
 
-function startSpawning(gameState) {
+function startSpawning(roomId, gameState) {
     gameState.spawnInterval = setInterval(() => {
         if (gameState.fallingWords.length < gameState.maxWords && gameState.isGameActive) {
-            spawnWord(gameState);
+            spawnWord(roomId, gameState);
         } else if (gameState.fallingWords.length >= gameState.maxWords) {
-            endGame(gameState);
+            endGame(roomId, gameState);
         }
     }, gameState.settings.spawnRate * 1000);
 }
 
-function spawnWord(gameState) {
+function spawnWord(roomId, gameState) {
     const word = getRandomWord(gameState);
     const wordId = `word-${Date.now()}-${Math.random()}`;
     const wordObj = {
@@ -56,15 +56,15 @@ function spawnWord(gameState) {
         text: word,
         speed : (gameState.settings.speed / 5) * (0.5 + Math.random() * 0.5),
     }
-    io.sendSpawnWord(wordObj);
+    io.sendSpawnWord(roomId, wordObj);
     gameState.fallingWords.push(wordObj);
 }
 
-function restartSpawnInterval(gameState) {
+function restartSpawnInterval(roomId, gameState) {
     if (gameState.spawnInterval) {
         clearInterval(gameState.spawnInterval);
     }
-    startSpawning(gameState);
+    startSpawning(roomId, gameState);
 }
 
 function endGame(gameState) {
