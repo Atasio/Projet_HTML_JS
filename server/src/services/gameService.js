@@ -10,7 +10,7 @@ function startGame(gameState) {
 }
 
 function createGameState(){
-    const gameState = {
+    return  {
     score: 0,
     combo: 1,
     wordsTyped: 0,
@@ -22,9 +22,7 @@ function createGameState(){
         speed: 5,
         maxLength: 12,
         spawnRate: 2
-    }
-    };
-    return gameState;
+    }};
 }
 // === WORD MANAGEMENT ===
 let wordsList = [];
@@ -52,7 +50,7 @@ function startSpawning(gameState) {
 }
 
 function spawnWord(gameState) {
-    const word = getRandomWord();
+    const word = getRandomWord(gameState);
     const wordId = `word-${Date.now()}-${Math.random()}`;
     const wordObj = {
         id: wordId,
