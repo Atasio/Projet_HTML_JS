@@ -1,3 +1,5 @@
+import gameEngine from "./gameEngine.js";
+
 function showScorePopup(score, x, y) {
     const popup = document.createElement('div');
     popup.className = 'score-popup';
@@ -36,6 +38,11 @@ function updateProgress(gameState) {
 
 function updateErrors(gameState) {
     const maxErrors = 10;
+    gameState.errors++;
+    if(gameState.errors >= maxErrors) {
+        gameState.errors = maxErrors;
+        gameEngine.endGame();
+    }
     const percentage = (gameState.errors / maxErrors) * 100;
     document.getElementById('progress-bar-errors').style.width = percentage + '%';
     document.getElementById('progress-text-errors').textContent = 

@@ -25,14 +25,14 @@ function spawnWord(word) {
     wordObj.element = wordElement;
 
     gameState.fallingWords.push(wordObj);
-    animateWord(wordObj);
+    animateWord(wordObj, gameState);
 
 }
 
 function removeWord(wordId) {
     const index = gameState.fallingWords.findIndex(w => w.id === wordId);    
     const wordObj = gameState.fallingWords[index];
-    console.log("Removing word:", wordObj);
+    //console.log("Removing word:", wordObj);
     
     // Cancel animation
     if (wordObj.animationId) {
@@ -49,7 +49,7 @@ function removeWord(wordId) {
     gameState.fallingWords.splice(index, 1);
 }
 
-function animateWord(wordObj) {
+function animateWord(wordObj, gameState) {
     const animate = () => {
         wordObj.y += wordObj.speed;
         wordObj.element.style.top = wordObj.y + 'px';
@@ -62,7 +62,6 @@ function animateWord(wordObj) {
         
         // Check if reached bottom
         if (wordObj.y > bottomThreshold) {
-            gameState.errors++;
             gameScoreHandler.updateErrors(gameState);
             removeWord(wordObj.id, false);
             // gameState.combo = 1;

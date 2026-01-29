@@ -13,11 +13,12 @@ socket.on("gameState", (data) => {
   gameState.score = data.score;
   gameState.combo = data.combo;
   gameState.wordsTyped = data.wordsTyped;
-  
+  gameState.errors = data.errors;
+  gameState.gameStartTime = Date.now();
 })
 
 socket.on("spawnWord", (word) => {
-  console.log("Spawn word received", word);
+  //console.log("Spawn word received", word);
   gameWordHandler.spawnWord(word);
 })
 

@@ -45,6 +45,7 @@ function initControls() {
     const toggleBtn = document.getElementById('toggle-controls');
     const controlsContent = document.getElementById('controls-content');
     const restartBtn = document.getElementById('restart-btn');
+    gameState.gameStartTime = Date.now();
     
     toggleBtn.addEventListener('click', () => {
         controlsContent.classList.toggle('hidden');
