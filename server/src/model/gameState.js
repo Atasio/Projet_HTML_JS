@@ -11,7 +11,8 @@ const gameState = {
         speed: 5,
         maxLength: 12,
         spawnRate: 2
-    }
+    },
+    spawnInterval: null
 };
 
 export { gameState };

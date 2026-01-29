@@ -1,6 +1,7 @@
 import { Server } from 'socket.io'
 import gameService from './services/gameService.js'
 import roomService from './services/roomService.js'
+import { clear } from 'console'
 
 let io
 
@@ -32,7 +33,10 @@ function initIO(httpServer) {
         console.log("No room found for player:", socket.id);
       }
     })
-    socket.on('disconnect', () => console.log('Player disconnected', socket.id))
+    socket.on('disconnect', () => {
+      roomService.leaveRoom(socket.id);
+      console.log('Player disconnected', socket.id)
+    })
 
     socket.on('createRoom', () => {
       const room = roomService.createRoom(socket.id);
