@@ -25,6 +25,11 @@ socket.on("updateGameState", (score, combo, wordsTyped) => {
   gameState.wordsTyped = wordsTyped;
 })
 
+socket.on("roomCreated", (codeId) => {
+  console.log("Room created with codeId:", codeId);
+  window.location.href = `../multiplayer.html?codeId=${codeId.codeId}`;
+});
+
 function sendWordCompleted(word) {
   socket.emit("wordCompleted", { word: word });
 }
@@ -33,7 +38,12 @@ function sendStartGame() {
   socket.emit("startGame");
 }
 
+function sendCreateRoom() {
+  socket.emit("createRoom");
+}
+
 export const io_client = {
   sendWordCompleted,
   sendStartGame,
+  sendCreateRoom,
 };

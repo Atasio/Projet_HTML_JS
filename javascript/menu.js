@@ -4,10 +4,7 @@ const join_room = document.getElementById('join-room-btn');
 const create_room = document.getElementById('create-room-btn');
 
 join_room.addEventListener('click', () => {
-    const room_code = prompt("Enter Room Code:");
-    if (room_code) {
-        window.location.href = `room.html?code=${room_code}`;
-    }
+    showRoomCodeDialog();
 });
 
 create_room.addEventListener('click', () => {
@@ -136,3 +133,54 @@ document.querySelectorAll('.menu-btn').forEach(button => {
         }
     });
 });
+
+function showRoomCodeDialog() {
+    // Créer l'overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'dialog-overlay';
+    overlay.innerHTML = `
+        <div class="dialog-box">
+            <h2 class="dialog-title">Rejoindre une partie</h2>
+            <p class="dialog-description">Entrez le code de la room</p>
+            <input type="text" id="room-code-input" placeholder="XXXXXXXXXX" maxlength="10">
+            <div class="dialog-buttons">
+                <button id="dialog-cancel" class="dialog-btn cancel-btn">Annuler</button>
+                <button id="dialog-join" class="dialog-btn join-btn">Rejoindre</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    
+    // Focus sur l'input
+    const input = document.getElementById('room-code-input');
+    setTimeout(() => input.focus(), 100);
+    
+    // Event listeners
+    document.getElementById('dialog-cancel').addEventListener('click', closeDialog);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeDialog();
+    });
+    
+    document.getElementById('dialog-join').addEventListener('click', () => {
+        const code = input.value.trim().toUpperCase();
+        if (code) {
+            window.location.href = `room.html?code=${code}`;
+        }
+    });
+    
+    // Entrée pour valider
+    // input.addEventListener('keypress', (e) => {
+    //     if (e.key === 'Enter') {
+    //         const code = input.value.trim().toUpperCase();
+    //         if (code) {
+    //             window.location.href = `room.html?code=${code}`;
+    //         }
+    //     }
+    // });
+    
+    function closeDialog() {
+        overlay.classList.add('fade-out');
+        setTimeout(() => overlay.remove(), 300);
+    }
+}

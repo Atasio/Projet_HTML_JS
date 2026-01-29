@@ -1,5 +1,6 @@
 import { Server } from 'socket.io'
 import gameService from './services/gameService.js'
+import roomService from './services/roomService.js'
 
 let io
 
@@ -18,8 +19,13 @@ function initIO(httpServer) {
       console.log('Game started by', socket.id)
     })
 
-
     socket.on('disconnect', () => console.log('Player disconnected', socket.id))
+
+    socket.on('createRoom', () => {
+      const codeId = roomService.createRoom(socket.id);
+      console.log('Room created with codeId:', codeId);
+      socket.emit('roomCreated', { codeId: codeId });
+    })
   })
 }
 
