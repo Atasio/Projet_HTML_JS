@@ -1,6 +1,3 @@
-import { createRoom } from "../server/Model/services/roomService";
-import { io_client } from "./io_client";
-
 // === EVENT LISTENERS ===
 const solo = document.getElementById('solo-btn');
 const join_room = document.getElementById('join-room-btn');
