@@ -37,6 +37,7 @@ function updateProgress(gameState) {
 }
 
 function updateErrors(gameState) {
+    console.log("Updating errors:", gameState.errors);
     const maxErrors = 10;
     if(gameState.errors >= maxErrors) {
         gameState.errors = maxErrors;

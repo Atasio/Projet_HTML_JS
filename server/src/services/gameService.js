@@ -43,7 +43,7 @@ async function loadWords() {
 
 function startSpawning(roomId, gameState) {
     gameState.spawnInterval = setInterval(() => {
-        if (gameState.fallingWords.length < gameState.maxWords && gameState.isGameActive) {
+        if (gameState.fallingWords.length < gameState.maxWords && gameState.isGameActive == true) {
             spawnWord(roomId, gameState);
         } else if (gameState.fallingWords.length >= gameState.maxWords) {
             endGame(roomId, gameState);
@@ -52,6 +52,7 @@ function startSpawning(roomId, gameState) {
 }
 
 function spawnWord(roomId, gameState) {
+    if(!gameState.isGameActive) return;
     const word = getRandomWord(gameState);
     const wordId = `word-${Date.now()}-${Math.random()}`;
     const wordObj = {

@@ -47,8 +47,6 @@ function removeWord(wordId) {
     
     // Remove from array
     gameState.fallingWords.splice(index, 1);
-    gameState.errors++;
-    gameScoreHandler.updateErrors(gameState);
 }
 
 function animateWord(wordObj, gameState) {
@@ -64,7 +62,8 @@ function animateWord(wordObj, gameState) {
         
         // Check if reached bottom
         if (wordObj.y > bottomThreshold) {
-            gameScoreHandler.updateErrors(gameState);
+            gameState.errors++;
+            gameScoreHandler.updateErrors(gameState);   
             removeWord(wordObj.id, false);
             // gameState.combo = 1;
             // updateCombo();
