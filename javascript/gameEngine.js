@@ -6,6 +6,34 @@ function restartSpawnInterval() {
     }
     startSpawning();
 }
+function restartGame() {
+    // Clear existing words
+    gameState.fallingWords.forEach(word => {
+        const element = document.getElementById(word.id);
+        if (element) element.remove();
+    });
+    
+    // Reset state
+    gameState.score = 0;
+    gameState.combo = 1;
+    gameState.wordsTyped = 0;
+    gameState.fallingWords = [];
+    gameState.gameStartTime = Date.now();
+    gameState.isGameActive = true;
+    
+    // Update UI
+    updateScore();
+    updateCombo();
+    updateProgress();
+    
+    // Clear and reset input
+    const input = document.getElementById('word-input');
+    input.value = '';
+    input.focus();
+    
+    // Restart spawning
+    restartSpawnInterval();
+}
 
 function endGame() {
     gameState.isGameActive = false;

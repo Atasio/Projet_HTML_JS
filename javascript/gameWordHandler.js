@@ -5,7 +5,7 @@ import { io_client } from "./io_client.js";
 
 function spawnWord(word) {
     const wordObj = {
-        id: word.wordId,
+        id: word.id,
         text: word.text,
         x: Math.random() * (window.innerWidth - 200) + 50,
         y: 120,
@@ -15,7 +15,7 @@ function spawnWord(word) {
     };
     // Create DOM element
     const wordElement = document.createElement('div');
-    wordElement.id = wordObj.wordId;
+    wordElement.id = wordObj.id;
     wordElement.className = 'falling-word';
     wordElement.textContent = wordObj.text;
     wordElement.style.left = wordObj.x + 'px';
@@ -74,13 +74,13 @@ function animateWord(wordObj) {
     animate();
 }
 
-function handleWordMatch(wordObj) {
+function handleWordMatch(wordObj, typedWord) {
     const element = wordObj.element;
     
     // Visual feedback
     element.classList.add('matched');
-
-    io_client.sendWordCompleted(wordObj.id);
+    console.log("typedWord:", typedWord);
+    io_client.sendWordCompleted(wordObj.id, typedWord);
     
     // Calculate score
     const baseScore = wordObj.text.length * 3;

@@ -11,14 +11,15 @@ function initIO(httpServer) {
   io.on('connection', (socket) => {
     console.log('Player connected', socket.id)
 
-    socket.on('wordCompleted', (data) => gameService.handleWordMatch(socket.id, data, io))
-
     socket.on('startGame', () => {
       gameService.startGame();
       console.log('Game started by', socket.id)
     })
 
-
+    socket.on('wordCompleted', (wordId, typedWord) => {
+      console.log("wordId received:", wordId, " typedWord:", typedWord);
+      gameService.handleWordMatch(wordId, typedWord)
+    })
     socket.on('disconnect', () => console.log('Player disconnected', socket.id))
   })
 }
@@ -30,7 +31,7 @@ function sendSpawnWord(word) {
 
 function sendUpdateGameState(score, combo, wordsTyped) {
   console.log('Updating gameState:', { score, combo, wordsTyped });
-  io.emit('updateGameState', { score, combo, wordsTyped })
+  io.emit('updateGameState', score, combo, wordsTyped)
 }
 
 export default { initIO, sendSpawnWord, sendUpdateGameState }
