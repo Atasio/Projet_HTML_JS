@@ -4,6 +4,8 @@ import gameParticles from "./gameParticles.js";
 import { io_client } from "./io_client.js";
 
 function spawnWord(word) {
+    console.log("Game isActive:", gameState.isGameActive);
+    if (!gameState.isGameActive) return;
     const wordObj = {
         id: word.id,
         text: word.text,
@@ -25,6 +27,7 @@ function spawnWord(word) {
     wordObj.element = wordElement;
 
     gameState.fallingWords.push(wordObj);
+    console.log("Word table:", gameState.fallingWords);
     animateWord(wordObj, gameState);
 
 }

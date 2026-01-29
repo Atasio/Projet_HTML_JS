@@ -45,9 +45,10 @@ function startSpawning(roomId, gameState) {
     gameState.spawnInterval = setInterval(() => {
         if (gameState.fallingWords.length < gameState.maxWords && gameState.isGameActive == true) {
             spawnWord(roomId, gameState);
-        } else if (gameState.fallingWords.length >= gameState.maxWords) {
-            endGame(roomId, gameState);
-        }
+        } 
+        // else if (gameState.fallingWords.length >= gameState.maxWords) {
+        //     endGame(roomId, gameState);
+        // }
     }, gameState.settings.spawnRate * 1000);
 }
 

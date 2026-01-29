@@ -47,6 +47,7 @@ function initControls() {
     const toggleBtn = document.getElementById('toggle-controls');
     const controlsContent = document.getElementById('controls-content');
     const restartBtn = document.getElementById('restart-btn');
+    gameState.isGameActive = true;
     gameState.gameStartTime = Date.now();
     gameState.errors = 0;
     
