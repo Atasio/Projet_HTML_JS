@@ -24,6 +24,21 @@ function joinRoom(codeId, socketId) {
     return false;
 }
 
+function leaveRoom(codeId, socketId) {
+    if (rooms[codeId]) {
+        const index = rooms[codeId].players.indexOf(socketId);
+        if (index !== -1) {
+            rooms[codeId].players.splice(index, 1);
+            return true;
+        }
+        if (rooms[codeId].players.length === 0) {
+            gameService.endGame(rooms[codeId].gameState);
+            delete rooms[codeId];
+        }
+    }
+    return false;
+}
+
 function generateUniqueRoomId() {
     return 'room-' + Date.now() + Math.random().toString(36);
 }
@@ -61,6 +76,7 @@ function getRoomFromPlayer(socketId) {
 export default {
     createRoom,
     joinRoom,
+    leaveRoom,
     getRoomId,
     getRoomCodeId,
     getRoomFromPlayer

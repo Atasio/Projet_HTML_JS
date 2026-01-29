@@ -26,7 +26,6 @@ function createGameState(){
 }
 // === WORD MANAGEMENT ===
 let wordsList = [];
-let spawnInterval = null;
 
 
 async function loadWords() {
@@ -40,7 +39,7 @@ async function loadWords() {
 }
 
 function startSpawning(gameState) {
-    spawnInterval = setInterval(() => {
+    gameState.spawnInterval = setInterval(() => {
         if (gameState.fallingWords.length < gameState.maxWords && gameState.isGameActive) {
             spawnWord(gameState);
         } else if (gameState.fallingWords.length >= gameState.maxWords) {
@@ -61,16 +60,16 @@ function spawnWord(gameState) {
     gameState.fallingWords.push(wordObj);
 }
 
-function restartSpawnInterval() {
-    if (spawnInterval) {
-        clearInterval(spawnInterval);
+function restartSpawnInterval(gameState) {
+    if (gameState.spawnInterval) {
+        clearInterval(gameState.spawnInterval);
     }
-    startSpawning();
+    startSpawning(gameState);
 }
 
 function endGame(gameState) {
     gameState.isGameActive = false;
-    clearInterval(spawnInterval);
+    clearInterval(gameState.spawnInterval);
     
     // Stop falling words
     gameState.fallingWords.forEach(word => {
