@@ -28,9 +28,9 @@ socket.on("updateGameState", (score, combo, wordsTyped) => {
   gameState.wordsTyped = wordsTyped;
 })
 
-socket.on("roomCreated", (codeId) => {
-  console.log("Room created with codeId:", codeId);
-  window.location.href = `../multiplayer.html?codeId=${codeId.codeId}`;
+socket.on("roomCreated", (room) => {
+  console.log("Room created :", room);
+  //window.location.href = `../multiplayer.html?codeId=${room.codeId}`;
 });
 
 function sendWordCompleted(wordId, typedWord) {

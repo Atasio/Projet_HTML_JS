@@ -24,9 +24,9 @@ function initIO(httpServer) {
     socket.on('disconnect', () => console.log('Player disconnected', socket.id))
 
     socket.on('createRoom', () => {
-      const codeId = roomService.createRoom(socket.id);
-      console.log('Room created with codeId:', codeId);
-      socket.emit('roomCreated', { codeId: codeId });
+      const room = roomService.createRoom(socket.id);
+      console.log('Room created:', room);
+      socket.emit('roomCreated', { room: room });
     })
   })
 }

@@ -1,8 +1,9 @@
 import { gameService } from './gameService.js';
+import { gameState } from '../model/gameState.js';
 
 const rooms = [];
 
-const roomState = {
+const room = {
     gameState: null,
     roomId: null,
     codeId: null,
@@ -17,11 +18,11 @@ export function createRoom(socketId) {
         players: [socketId],
         gameSettings: initializeGameSettings()
     };
-    roomState.gameState;
-    roomState.roomId = roomId;
-    roomState.codeId = codeId;
-    roomState.players = [socketId];
-    return roomState;
+    room.gameState = gameService.createGameState();
+    room.roomId = roomId;
+    room.codeId = codeId;
+    room.players = [socketId];
+    return room;
 }
 
 export function joinRoom(codeId, socketId) {

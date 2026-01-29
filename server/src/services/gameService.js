@@ -10,6 +10,23 @@ function startGame() {
     startSpawning();
 }
 
+function createGameState(){
+    const gameState = {
+    score: 0,
+    combo: 1,
+    wordsTyped: 0,
+    maxWords: 100,
+    fallingWords: [],
+    gameStartTime: null,
+    isGameActive: false,
+    settings: {
+        speed: 5,
+        maxLength: 12,
+        spawnRate: 2
+    }
+    };
+    return gameState;
+}
 // === WORD MANAGEMENT ===
 let wordsList = [];
 let spawnInterval = null;
@@ -94,4 +111,4 @@ function handleWordMatch(wordId, typedWord) {
     io.sendUpdateGameState(gameState.score, gameState.combo, gameState.wordsTyped);
 }
 
-export default { gameState, startGame, handleWordMatch };
+export default { gameState, startGame, handleWordMatch, createGameState };
