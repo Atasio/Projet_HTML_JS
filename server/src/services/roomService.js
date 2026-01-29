@@ -1,26 +1,18 @@
+import { gameState } from '../model/gameState.js';
 import gameService from './gameService.js';
 
 const rooms = [];
 
-const room = {
-    gameState: null,
-    roomId: null,
-    codeId: null,
-    players: []
-};
-
 function createRoom(socketId) {
     const roomId = generateUniqueRoomId(); // On génère un room id unique mais ce n'est pas le code
     const codeId = generateUniqueCodeId(); // Code à 10 chiffres pour rejoindre la room
-    rooms[roomId] = {
+    const room = {
+        roomId: roomId,
         codeId: codeId,
+        gameState: gameService.createGameState(),
         players: [socketId],
-        gameSettings: initializeGameSettings()
     };
-    room.gameState = gameService.createGameState();
-    room.roomId = roomId;
-    room.codeId = codeId;
-    room.players = [socketId];
+    rooms[roomId] = room;
     return room;
 }
 
@@ -47,12 +39,6 @@ function initializeGameSettings() {
         maxLength: 12,
         spawnRate: 2
     };
-}
-
-function initializeGameState(){
-    return {
-
-    }
 }
 
 function getRoomId(roomId) {

@@ -13,14 +13,12 @@ function initIO(httpServer) {
     console.log('Player connected', socket.id)
 
     socket.on('startGame', () => {
-      const room = roomService.getRoomFromPlayer(socket.id);
-      if (room) {
-        gameService.startGame(room.gameState);
-        console.log('Game started by', socket.id)
+      let room = roomService.getRoomFromPlayer(socket.id);
+      if (!room) {
+        room = roomService.createRoom(socket.id);
       }
-      else {
-        console.log("No room found for player:", socket.id);
-      }
+      gameService.startGame(room.gameState);
+      console.log('Game started by', socket.id)
     })
 
     socket.on('wordCompleted', (wordId, typedWord) => {
