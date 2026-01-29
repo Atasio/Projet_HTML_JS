@@ -3,6 +3,7 @@ import gameParticles from "./gameParticles.js";
 import { io_client } from "./io_client.js";
 import gameInputHandler from "./gameInputHandler.js";
 import  gameWordHandling  from "./gameWordHandler.js";
+import gameEngine from "./gameEngine.js";
 
 let canvas;
 
@@ -35,6 +36,7 @@ function resizeCanvas() {
 
 function startGame() {
     updateTimer();
+    initControls();
     io_client.sendStartGame();
     document.getElementById('start-btn').style.display = 'none';
     document.getElementById('word-input').focus();
@@ -46,6 +48,7 @@ function initControls() {
     const controlsContent = document.getElementById('controls-content');
     const restartBtn = document.getElementById('restart-btn');
     gameState.gameStartTime = Date.now();
+    gameState.errors = 0;
     
     toggleBtn.addEventListener('click', () => {
         controlsContent.classList.toggle('hidden');
@@ -65,7 +68,7 @@ function initControls() {
         restartSpawnInterval();
     });
     
-    // restartBtn.addEventListener('click', restartGame);   
+    restartBtn.addEventListener('click', gameEngine.restartGame); 
 }
 
 function setupInputListener() {

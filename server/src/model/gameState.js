@@ -1,7 +1,7 @@
 const gameState = {
     score: 0,
-    combo: 1,
     errors: 0,
+    combo: 1,
     wordsTyped: 0,
     maxWords: 100,
     fallingWords: [],

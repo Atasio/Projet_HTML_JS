@@ -38,7 +38,6 @@ function updateProgress(gameState) {
 
 function updateErrors(gameState) {
     const maxErrors = 10;
-    gameState.errors++;
     if(gameState.errors >= maxErrors) {
         gameState.errors = maxErrors;
         gameEngine.endGame();
