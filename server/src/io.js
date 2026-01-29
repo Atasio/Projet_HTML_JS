@@ -13,13 +13,26 @@ function initIO(httpServer) {
     console.log('Player connected', socket.id)
 
     socket.on('startGame', () => {
-      gameService.startGame();
-      console.log('Game started by', socket.id)
+      const room = roomService.getRoomFromPlayer(socket.id);
+      if (room) {
+        gameService.startGame(room.gameState);
+        console.log('Game started by', socket.id)
+      }
+      else {
+        console.log("No room found for player:", socket.id);
+      }
     })
 
     socket.on('wordCompleted', (wordId, typedWord) => {
       console.log("wordId received:", wordId, " typedWord:", typedWord);
-      gameService.handleWordMatch(wordId, typedWord)
+      const room = roomService.getRoomFromPlayer(socket.id);
+      if (room) {
+        const gameState = room.gameState;
+        gameService.handleWordMatch(gameState, wordId, typedWord);
+      }
+      else {
+        console.log("No room found for player:", socket.id);
+      }
     })
     socket.on('disconnect', () => console.log('Player disconnected', socket.id))
 

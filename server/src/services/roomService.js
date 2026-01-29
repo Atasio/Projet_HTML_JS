@@ -1,5 +1,4 @@
-import { gameService } from './gameService.js';
-import { gameState } from '../model/gameState.js';
+import gameService from './gameService.js';
 
 const rooms = [];
 
@@ -10,7 +9,7 @@ const room = {
     players: []
 };
 
-export function createRoom(socketId) {
+function createRoom(socketId) {
     const roomId = generateUniqueRoomId(); // On génère un room id unique mais ce n'est pas le code
     const codeId = generateUniqueCodeId(); // Code à 10 chiffres pour rejoindre la room
     rooms[roomId] = {
@@ -25,7 +24,7 @@ export function createRoom(socketId) {
     return room;
 }
 
-export function joinRoom(codeId, socketId) {
+function joinRoom(codeId, socketId) {
     if (rooms[codeId]) {
         rooms[codeId].players.push(socketId);
         return true;
@@ -56,10 +55,27 @@ function initializeGameState(){
     }
 }
 
-export function getRoomId(roomId) {
+function getRoomId(roomId) {
     return rooms[roomId];
 }
 
-export function getRoomCodeId(roomId) {
+function getRoomCodeId(roomId) {
     return rooms[roomId] ? rooms[roomId].codeId : null;
 }
+
+function getRoomFromPlayer(socketId) {
+    for (const roomId in rooms) {
+        if (rooms[roomId].players.includes(socketId)) {
+            return rooms[roomId];
+        }
+    }
+    return null;
+}
+
+export default {
+    createRoom,
+    joinRoom,
+    getRoomId,
+    getRoomCodeId,
+    getRoomFromPlayer
+};

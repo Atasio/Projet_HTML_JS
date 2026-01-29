@@ -1,13 +1,12 @@
 import wordsService from "./wordsService.js";
 import  io from "../io.js";
-import { gameState } from "../model/gameState.js";
 
 // === GAME LIFECYCLE ===
-function startGame() {
+function startGame(gameState) {
     loadWords();
     gameState.isGameActive = true;
     gameState.gameStartTime = Date.now();
-    startSpawning();
+    startSpawning(gameState);
 }
 
 function createGameState(){
@@ -42,17 +41,17 @@ async function loadWords() {
     }
 }
 
-function startSpawning() {
+function startSpawning(gameState) {
     spawnInterval = setInterval(() => {
         if (gameState.fallingWords.length < gameState.maxWords && gameState.isGameActive) {
-            spawnWord();
+            spawnWord(gameState);
         } else if (gameState.fallingWords.length >= gameState.maxWords) {
-            endGame();
+            endGame(gameState);
         }
     }, gameState.settings.spawnRate * 1000);
 }
 
-function spawnWord() {
+function spawnWord(gameState) {
     const word = getRandomWord();
     const wordId = `word-${Date.now()}-${Math.random()}`;
     const wordObj = {
@@ -71,7 +70,7 @@ function restartSpawnInterval() {
     startSpawning();
 }
 
-function endGame() {
+function endGame(gameState) {
     gameState.isGameActive = false;
     clearInterval(spawnInterval);
     
@@ -83,7 +82,7 @@ function endGame() {
     });
 }
 
-function getRandomWord() {
+function getRandomWord(gameState) {
     const filteredWords = wordsList.filter(
         word => word.length <= gameState.settings.maxLength
     );
@@ -93,7 +92,7 @@ function getRandomWord() {
 }
 
 // === WORD MATCH ===
-function handleWordMatch(wordId, typedWord) {
+function handleWordMatch(gameState, wordId, typedWord) {
     console.log("handleWordMatch called with wordId:", wordId);
     console.log("current fallingWords:", gameState.fallingWords);
     const wordObj = gameState.fallingWords.find(word => word.id === wordId);
@@ -111,4 +110,4 @@ function handleWordMatch(wordId, typedWord) {
     io.sendUpdateGameState(gameState.score, gameState.combo, gameState.wordsTyped);
 }
 
-export default { gameState, startGame, handleWordMatch, createGameState };
+export default { startGame, handleWordMatch, createGameState };
