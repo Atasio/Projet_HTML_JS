@@ -62,6 +62,8 @@ function animateWord(wordObj) {
         
         // Check if reached bottom
         if (wordObj.y > bottomThreshold) {
+            gameState.errors++;
+            gameScoreHandler.updateErrors(gameState);
             removeWord(wordObj.id, false);
             // gameState.combo = 1;
             // updateCombo();

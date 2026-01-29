@@ -25,6 +25,7 @@ function restartGame() {
     updateScore();
     updateCombo();
     updateProgress();
+    updateErrors();
     
     // Clear and reset input
     const input = document.getElementById('word-input');

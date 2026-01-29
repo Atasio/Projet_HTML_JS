@@ -34,4 +34,12 @@ function updateProgress(gameState) {
         `${gameState.wordsTyped}/${gameState.maxWords} mots`;
 }
 
-export default { showScorePopup, updateScore, updateCombo, updateProgress };
+function updateErrors(gameState) {
+    const maxErrors = 10;
+    const percentage = (gameState.errors / maxErrors) * 100;
+    document.getElementById('progress-bar-errors').style.width = percentage + '%';
+    document.getElementById('progress-text-errors').textContent = 
+        `${gameState.errors}/${maxErrors} erreurs`;
+}
+
+export default { showScorePopup, updateScore, updateCombo, updateProgress, updateErrors };
