@@ -36,15 +36,19 @@
         <div id="start-screen">
             <button id="start-btn">Commencer la partie</button>
         </div>
-        <!-- Barre de défaite -->
-        <div id="progress-container">
-            <div id="progress-bar"></div>
-            <span id="progress-text">0/10 erreurs</span>
-        </div>
-        <!-- Barre de progression -->
-        <div id="progress-container">
-            <div id="progress-bar-errors"></div>
-            <span id="progress-text-errors">0/100 mots</span>
+        <!-- Conteneur des deux barres -->
+        <div id="progress-wrapper">
+            <!-- Barre d'erreurs -->
+            <div class="progress-container">
+                <div id="progress-bar-errors"></div>
+                <span id="progress-text-errors" class="progress-text">0/10 erreurs</span>
+            </div>
+            
+            <!-- Barre de progression -->
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+                <span id="progress-text" class="progress-text">0/100 mots</span>
+            </div>
         </div>
     <div>
 

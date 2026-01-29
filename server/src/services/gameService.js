@@ -6,6 +6,7 @@ function startGame(gameState) {
     loadWords();
     gameState.isGameActive = true;
     gameState.gameStartTime = Date.now();
+    console.log("Game started at", gameState.gameStartTime);
     startSpawning(gameState);
 }
 
