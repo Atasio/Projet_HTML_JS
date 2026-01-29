@@ -47,6 +47,8 @@ function removeWord(wordId) {
     
     // Remove from array
     gameState.fallingWords.splice(index, 1);
+    gameState.errors++;
+    gameScoreHandler.updateErrors(gameState);
 }
 
 function animateWord(wordObj, gameState) {

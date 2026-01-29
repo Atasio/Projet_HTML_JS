@@ -1,11 +1,12 @@
 import { gameState } from "./gameState.js";
 import gameScoreHandler from "./gameScoreHandler.js";
+import { io_client } from "./io_client.js";
 
 function restartSpawnInterval() {
-    if (spawnInterval) {spawn
-        clearInterval(spawnInterval);
+    if (gameState.spawnInterval) {
+        clearInterval(gameState.spawnInterval);
     }
-    startSpawning();
+    io_client.sendStartGame();
 }
 function restartGame() {
     // Clear existing words

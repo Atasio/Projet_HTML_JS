@@ -6,6 +6,7 @@ function startGame(roomdId, gameState) {
     loadWords();
     gameState.isGameActive = true;
     gameState.gameStartTime = Date.now();
+    gameState.errors = 0;
     console.log("Game started at", gameState.gameStartTime);
     startSpawning(roomdId, gameState);
 }
@@ -13,6 +14,7 @@ function startGame(roomdId, gameState) {
 function createGameState(){
     return  {
     score: 0,
+    errors: 0,
     combo: 1,
     wordsTyped: 0,
     maxWords: 100,
