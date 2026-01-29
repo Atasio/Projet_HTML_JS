@@ -10,7 +10,10 @@ socket.on("connect", () => {
 
 socket.on("gameState", (data) => {
   console.log("Game state received", data);
-  gameState = data;
+  gameState.score = data.score;
+  gameState.combo = data.combo;
+  gameState.wordsTyped = data.wordsTyped;
+  
 })
 
 socket.on("spawnWord", (word) => {
@@ -30,11 +33,12 @@ socket.on("roomCreated", (codeId) => {
   window.location.href = `../multiplayer.html?codeId=${codeId.codeId}`;
 });
 
-function sendWordCompleted(word) {
-  socket.emit("wordCompleted", { word: word });
+function sendWordCompleted(wordId, typedWord) {
+  socket.emit("wordCompleted", wordId, typedWord);
 }
 
 function sendStartGame() {
+  console.log("Sending startGame");
   socket.emit("startGame");
 }
 

@@ -1,21 +1,8 @@
 import wordsService from "./wordsService.js";
 import  io from "../io.js";
+import { gameState } from "../model/gameState.js";
 
-const gameState = {
-    score: 0,
-    combo: 1,
-    wordsTyped: 0,
-    maxWords: 100,
-    fallingWords: [],
-    gameStartTime: null,
-    isGameActive: false,
-    settings: {
-        speed: 5,
-        maxLength: 12,
-        spawnRate: 2
-    }
-};
-
+// === GAME LIFECYCLE ===
 function startGame() {
     loadWords();
     gameState.isGameActive = true;
@@ -77,8 +64,6 @@ function endGame() {
             cancelAnimationFrame(word.animationId);
         }
     });
-    
-    alert(`Partie terminée!\nScore final: ${gameState.score}\nMots tapés: ${gameState.wordsTyped}/${gameState.maxWords}`);
 }
 
 function getRandomWord() {
@@ -91,8 +76,11 @@ function getRandomWord() {
 }
 
 // === WORD MATCH ===
-function handleWordMatch(wordId) {
+function handleWordMatch(wordId, typedWord) {
+    console.log("handleWordMatch called with wordId:", wordId);
+    console.log("current fallingWords:", gameState.fallingWords);
     const wordObj = gameState.fallingWords.find(word => word.id === wordId);
+    console.log("Handling word match for:", wordObj);
     if (!wordObj) return;
     // Calculate score
     const baseScore = wordObj.text.length * 3;
@@ -102,12 +90,8 @@ function handleWordMatch(wordId) {
     gameState.combo = Math.min(gameState.combo + 0.5, 5);
     gameState.wordsTyped++;
 
-    io.sendUpdateGameState(gameState.score, gameState.combo, gameState.wordsTyped);
 
-    setTimeout(() => {
-        element.classList.add('destroying');
-        setTimeout(() => removeWord(wordObj.id, true), 500);
-    }, 100);
+    io.sendUpdateGameState(gameState.score, gameState.combo, gameState.wordsTyped);
 }
 
 export default { gameState, startGame, handleWordMatch };
