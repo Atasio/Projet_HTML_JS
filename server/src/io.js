@@ -1,9 +1,9 @@
 import { Server } from 'socket.io'
-import { spawnWord } from './services/gameService.js'
+import gameService from './services/gameService.js'
 
 let io
 
-export function initIO(httpServer) {
+function initIO(httpServer) {
   io = new Server(httpServer, {
     cors: { origin: '*' }
   })
@@ -11,13 +11,26 @@ export function initIO(httpServer) {
   io.on('connection', (socket) => {
     console.log('Player connected', socket.id)
 
-    socket.on('wordCompleted', (data) => handleWordMatch(socket.id, data, io))
+    socket.on('wordCompleted', (data) => gameService.handleWordMatch(socket.id, data, io))
+
+    socket.on('startGame', () => {
+      gameService.startGame();
+      console.log('Game started by', socket.id)
+    })
 
 
     socket.on('disconnect', () => console.log('Player disconnected', socket.id))
   })
 }
 
-function notify(roomId, event, data) {
-  io.to(roomId).emit(event, data)
+function sendSpawnWord(word) {
+  console.log('Sending spawnWord:', word);
+  io.emit('spawnWord', word)
 }
+
+function sendUpdateGameState(score, combo, wordsTyped) {
+  console.log('Updating gameState:', { score, combo, wordsTyped });
+  io.emit('updateGameState', { score, combo, wordsTyped })
+}
+
+export default { initIO, sendSpawnWord, sendUpdateGameState }

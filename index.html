@@ -32,11 +32,18 @@
         <!-- Zone de jeu pour les mots tombants -->
         <div id="word-zone"></div>
 
+                <!-- Bouton commencer la partie -->
+        <div id="start-screen">
+            <button id="start-btn">Commencer la partie</button>
+        </div>
         <!-- Barre de progression -->
         <div id="progress-container">
             <div id="progress-bar"></div>
             <span id="progress-text">0/100 mots</span>
         </div>
+    <div>
+
+    </div>
 
         <!-- Input zone fixe en bas -->
         <div id="input-zone">
@@ -82,9 +89,9 @@
             </div>
         </div>
     </div>
-
-    <script src="javascript/generation_mots.js"></script>
-    <script src="javascript/gameEngine.js"></script>
+    <script src="javascript/gameInitialisation.js" type="module"></script>
+    <script src="javascript/gameEngine.js" type="module"></script>
     <script src="javascript/io_client.js" type="module"></script>
+    <script src="javascript/generation_mots.js" type="module"></script>
 </body>
 </html>

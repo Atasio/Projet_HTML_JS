@@ -1,3 +1,6 @@
+import wordsService from "./wordsService.js";
+import  io from "../io.js";
+
 const gameState = {
     score: 0,
     combo: 1,
@@ -14,6 +17,7 @@ const gameState = {
 };
 
 function startGame() {
+    loadWords();
     gameState.isGameActive = true;
     gameState.gameStartTime = Date.now();
     startSpawning();
@@ -25,23 +29,35 @@ let spawnInterval = null;
 
 
 async function loadWords() {
-    const response = await fetch('../words.json');
-    if (!response.ok) {
+    const words = await wordsService.getAllWords();
+    if (!words) {
         // Fallback words si le fichier n'existe pas
         wordsList = generateFallbackWords();
     } else {
-        wordsList = await response.json();
+        wordsList = words;
     }
 }
 
 function startSpawning() {
     spawnInterval = setInterval(() => {
-        if (gameState.wordsTyped < gameState.maxWords && gameState.isGameActive) {
+        if (gameState.fallingWords.length < gameState.maxWords && gameState.isGameActive) {
             spawnWord();
-        } else if (gameState.wordsTyped >= gameState.maxWords) {
+        } else if (gameState.fallingWords.length >= gameState.maxWords) {
             endGame();
         }
     }, gameState.settings.spawnRate * 1000);
+}
+
+function spawnWord() {
+    const word = getRandomWord();
+    const wordId = `word-${Date.now()}-${Math.random()}`;
+    const wordObj = {
+        id: wordId,
+        text: word,
+        speed : (gameState.settings.speed / 5) * (0.5 + Math.random() * 0.5),
+    }
+    io.sendSpawnWord(wordObj);
+    gameState.fallingWords.push(wordObj);
 }
 
 function restartSpawnInterval() {
@@ -75,37 +91,23 @@ function getRandomWord() {
 }
 
 // === WORD MATCH ===
-function handleWordMatch(wordObj) {
-    const element = wordObj.element;
-    
-    // Visual feedback
-    element.classList.add('matched');
-    
+function handleWordMatch(wordId) {
+    const wordObj = gameState.fallingWords.find(word => word.id === wordId);
+    if (!wordObj) return;
     // Calculate score
     const baseScore = wordObj.text.length * 3;
     const scoreWithCombo = baseScore * gameState.combo;
-    gameState.score += scoreWithCombo;
-    
-    // -------------------------------------------------------------------------------------------------------------------------------------
-    // Show score popup
-    showScorePopup(scoreWithCombo, wordObj.x, wordObj.y);
-    
-    // Create particles
-    createParticles(wordObj.x + element.offsetWidth / 2, wordObj.y + element.offsetHeight / 2);
-    // -------------------------------------------------------------------------------------------------------------------------------------
 
-    // Update combo
+    gameState.score += scoreWithCombo;
     gameState.combo = Math.min(gameState.combo + 0.5, 5);
-    updateCombo();
-    
-    // Update stats
     gameState.wordsTyped++;
-    updateScore();
-    updateProgress();
-    
-    // Remove word with animation
+
+    io.sendUpdateGameState(gameState.score, gameState.combo, gameState.wordsTyped);
+
     setTimeout(() => {
         element.classList.add('destroying');
         setTimeout(() => removeWord(wordObj.id, true), 500);
     }, 100);
 }
+
+export default { gameState, startGame, handleWordMatch };
