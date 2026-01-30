@@ -122,9 +122,14 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, m => map[m]);
 }
 
-// Charger le leaderboard au chargement de la page
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', displayLeaderboard);
-} else {
-    displayLeaderboard();
+function loadLeaderboard() {
+    // Charger le leaderboard au chargement de la page
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', displayLeaderboard);
+    } else {
+        displayLeaderboard();
+    }
 }
+
+loadLeaderboard();
+export default { saveToLeaderboard, getLeaderboard, displayLeaderboard, clearLeaderboard, loadLeaderboard };
