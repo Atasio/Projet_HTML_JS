@@ -184,3 +184,30 @@ function showRoomCodeDialog() {
         setTimeout(() => overlay.remove(), 300);
     }
 }
+
+// Ajouter à menu.js
+
+solo.addEventListener('click', () => {
+    // Récupérer et envoyer les paramètres
+    const settings = getSettings();
+    sendSettingsToServer();
+    
+    // Stocker les paramètres pour la page solo
+    sessionStorage.setItem('gameSettings', JSON.stringify(settings));
+    
+    window.location.href = 'solo.html';
+});
+
+create_room.addEventListener('click', () => {
+    // Récupérer et envoyer les paramètres
+    const settings = getSettings();
+    
+    // TODO: Créer la room côté serveur et récupérer l'ID
+    const roomId = 'TEMP_ROOM_ID'; // À remplacer par la vraie room ID du serveur
+    sendSettingsToServer(roomId);
+    
+    // Stocker les paramètres pour la page de création
+    sessionStorage.setItem('gameSettings', JSON.stringify(settings));
+    
+    window.location.href = 'create_room.html';
+});

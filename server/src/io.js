@@ -45,9 +45,15 @@ function initIO(httpServer) {
       const room = createRoom(socket.id);
       socket.join(room.roomId);
       sendRoom(room);
-
-
     })
+
+    socket.on('gameSettings', (settings) => {
+      const room = roomService.getRoomFromPlayer(socket.id);
+      if (room) {
+        room.gameState.settings = settings;
+        io.to(room.roomId).emit('gameSettings', settings);
+      }
+    });
 
     socket.on('joinRoom', (codeId) => {
       const success = roomService.joinRoom(codeId, socket.id);

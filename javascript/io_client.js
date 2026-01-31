@@ -31,6 +31,11 @@ socket.on("updateGameState", (score, combo, wordsTyped) => {
   gameState.wordsTyped = wordsTyped;
 })
 
+socket.on("gameSettings", (settings) => {
+  console.log("Game settings received", settings);
+  gameState.settings = settings;
+})
+
 socket.on("roomCreated", (room) => {
   log(`Room created with codeId: ${room.codeId}`);
   console.log("Room data:", room);
@@ -54,6 +59,10 @@ function sendWordCompleted(wordId, typedWord) {
   socket.emit("wordCompleted", wordId, typedWord);
 }
 
+function sendGameSettings(settings) {
+  socket.emit("gameSettings", settings);
+}
+
 function sendStartGame() {
   console.log("Sending startGame");
   socket.emit("startGame");
@@ -68,4 +77,5 @@ export const io_client = {
   sendWordCompleted,
   sendStartGame,
   sendCreateRoom,
+  sendGameSettings,
 };
