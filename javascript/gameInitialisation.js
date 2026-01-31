@@ -92,3 +92,4 @@ function updateTimer() {
             `${minutes}:${seconds.toString().padStart(2, '0')}`;
     }, 1000);
 }
+

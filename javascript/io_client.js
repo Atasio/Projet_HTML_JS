@@ -2,9 +2,16 @@ import { io } from "https://cdn.socket.io/4.8.1/socket.io.esm.min.js";
 import gameWordHandler from "./gameWordHandler.js";
 import { gameState } from "./gameState.js";
 import { roomState } from "./roomState.js";
-import createRoom from "./createRoom.js";
+import { getUserId } from "./userIdentification.js";
+import roomHandler from "./roomHandler.js"
 
-const socket = io("http://localhost:3000")
+const socket = io("http://localhost:3000",
+  {
+    reconnectionDelayMax: 10000,
+    auth: {
+      userId: getUserId()
+  },
+});
 
 socket.on("connect", () => {
   console.log("Connected", socket.id)
@@ -31,8 +38,8 @@ socket.on("updateGameState", (score, combo, wordsTyped) => {
   gameState.wordsTyped = wordsTyped;
 })
 
-socket.on("roomCreated", (room) => {
-  log(`Room created with codeId: ${room.codeId}`);
+socket.on("roomJoined", (room) => {
+  log(`Joined room with codeId: ${room.codeId}`);
   console.log("Room data:", room);
   roomState.codeId = room.codeId;
   roomState.roomId = room.roomId;
@@ -43,8 +50,21 @@ socket.on("roomCreated", (room) => {
   gameState.maxWords = room.gameState.maxWords;
   gameState.isGameActive = room.gameState.isGameActive;
   gameState.settings = room.gameState.settings;
-  createRoom.displayRoomCode(room.codeId);
-  //window.location.href = `../multiplayer.html?codeId=${room.codeId}`;
+  roomHandler.displayRoomCode(room.codeId);
+})
+
+socket.on("roomInfo", (room) => {
+  console.log("Room data:", room);
+  roomState.codeId = room.codeId;
+  roomState.roomId = room.roomId;
+  roomState.players = room.players;
+  gameState.combo = room.gameState.combo;
+  gameState.score = room.gameState.score;
+  gameState.wordsTyped = room.gameState.wordsTyped;
+  gameState.maxWords = room.gameState.maxWords;
+  gameState.isGameActive = room.gameState.isGameActive;
+  gameState.settings = room.gameState.settings;
+  roomHandler.displayRoomCode(room.codeId);
 });
 
 function log(message) {
@@ -64,8 +84,15 @@ function sendCreateRoom() {
   socket.emit("createRoom");
 }
 
+function sendJoinRoom(roomId){
+  console.log("Trying to join room : ", roomId)
+  socket.emit("joinRoom", roomId)
+}
+
+
 export const io_client = {
   sendWordCompleted,
   sendStartGame,
   sendCreateRoom,
+  sendJoinRoom
 };

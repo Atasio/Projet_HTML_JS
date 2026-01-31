@@ -1,35 +1,49 @@
-import { gameState } from '../model/gameState.js';
 import gameService from './gameService.js';
-
 const rooms = [];
 
 function createRoom(socketId) {
     const roomId = generateUniqueRoomId(); // On génère un room id unique mais ce n'est pas le code
     const codeId = generateUniqueCodeId(); // Code à 10 chiffres pour rejoindre la room
+    const playerState = {
+        score: 0,
+        combo: 0,
+        wordsTyped: 0,
+    };
     const room = {
         roomId: roomId,
         codeId: codeId,
         gameState: gameService.createGameState(),
-        players: [socketId],
+        players: new Map([[socketId, playerState]]),
     };
     rooms[roomId] = room;
     return room;
 }
 
-function joinRoom(codeId, socketId) {
-    if (rooms[codeId]) {
-        rooms[codeId].players.push(socketId);
+function getRoomByCodeId(codeId){
+   const room = Object.values(rooms)
+  .find(r => r.codeId === codeId)
+  return room
+}
+
+function joinRoom(codeId, userID) {
+    const room = getRoomByCodeId(codeId)
+    if (room) {
+        room.players.set(userID, {
+            score: 0,
+            combo: 0,
+            wordsTyped: 0,
+        });
         return true;
     }
     return false;
 }
 
-function leaveRoom(socketId) {
-    const room = getRoomFromPlayer(socketId);
+function leaveRoom(userID) {
+    const room = getRoomFromPlayer(userID);
     if (room) {
-        room.players = room.players.filter(id => id !== socketId);
+        room.players.delete(userID);
         // Si la room est vide, on la supprime
-        if (room.players.length === 0) {
+        if (room.players.size === 0) {
             clearInterval(room.gameState.spawnInterval);
             delete rooms[room.roomId];
         }
@@ -77,9 +91,9 @@ function getRoomCodeId(roomId) {
     return rooms[roomId] ? rooms[roomId].codeId : null;
 }
 
-function getRoomFromPlayer(socketId) {
+function getRoomFromPlayer(userID) {
     for (const roomId in rooms) {
-        if (rooms[roomId].players.includes(socketId)) {
+        if (rooms[roomId].players.has(userID)) {
             return rooms[roomId];
         }
     }

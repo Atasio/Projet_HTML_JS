@@ -1,3 +1,5 @@
+import { io_client } from "./io_client.js";
+
 // === EVENT LISTENERS ===
 const solo = document.getElementById('solo-btn');
 const join_room = document.getElementById('join-room-btn');
@@ -8,12 +10,13 @@ join_room.addEventListener('click', () => {
 });
 
 create_room.addEventListener('click', () => {
-    window.location.href = 'create_room.html';
+    io_client.sendCreateRoom()
+    window.location.href = '../game.html';
 });
 
 solo.addEventListener('click', () => {
     console.log("Solo mode selected");
-    window.location.href = '../solo.html';
+    window.location.href = '../game.html';
 });
 
 // === CANVAS & PARTICLES ===
@@ -165,7 +168,8 @@ function showRoomCodeDialog() {
     document.getElementById('dialog-join').addEventListener('click', () => {
         const code = input.value.trim().toUpperCase();
         if (code) {
-            window.location.href = `room.html?code=${code}`;
+            io_client.sendJoinRoom(code)
+            window.location.href = `game.html?code=${code}`;
         }
     });
     
