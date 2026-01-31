@@ -4,6 +4,7 @@ import { gameState } from "./gameState.js";
 import { roomState } from "./roomState.js";
 import { getUserId } from "./userIdentification.js";
 import roomHandler from "./roomHandler.js"
+import gameEngine from "./gameEngine.js";
 
 const socket = io("http://localhost:3000",
   {
@@ -38,6 +39,11 @@ socket.on("updateGameState", (score, combo, wordsTyped) => {
   gameState.wordsTyped = wordsTyped;
 })
 
+socket.on("gameSettings", (settings) => {
+  console.log("Game settings received", settings);
+  gameState.settings = settings;
+})
+
 socket.on("roomJoined", (room) => {
   log(`Joined room with codeId: ${room.codeId}`);
   console.log("Room data:", room);
@@ -67,11 +73,23 @@ socket.on("roomInfo", (room) => {
   roomHandler.displayRoomCode(room.codeId);
 });
 
+socket.on("GameStarted", () => {
+  console.log("Game Started");
+  gameState.isGameActive = true;
+  gameState.gameStartTime = Date.now();
+  gameEngine.startGame();
+
+})
+
 function log(message) {
   console.log(message);
 }
 function sendWordCompleted(wordId, typedWord) {
   socket.emit("wordCompleted", wordId, typedWord);
+}
+
+function sendGameSettings(settings) {
+  socket.emit("gameSettings", settings);
 }
 
 function sendStartGame() {
@@ -94,5 +112,6 @@ export const io_client = {
   sendWordCompleted,
   sendStartGame,
   sendCreateRoom,
+  sendGameSettings,
   sendJoinRoom
 };

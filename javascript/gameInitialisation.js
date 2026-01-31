@@ -2,13 +2,10 @@ import { gameState } from "./gameState.js";
 import gameParticles from "./gameParticles.js";
 import { io_client } from "./io_client.js";
 import gameInputHandler from "./gameInputHandler.js";
-import  gameWordHandling  from "./gameWordHandler.js";
-import gameEngine from "./gameEngine.js";
 
 let canvas;
 
 window.addEventListener("load", async () => {
-    initControls();
     setupInputListener();
     gameParticles.animateParticles();
     startGameOnButtonStartClick();
@@ -36,39 +33,8 @@ function resizeCanvas() {
 
 function startGame() {
     updateTimer();
-    initControls();
     io_client.sendStartGame();
-    document.getElementById('start-btn').style.display = 'none';
-    document.getElementById('word-input').focus();
-}
 
-// === CONTROLS ===
-function initControls() {
-    const toggleBtn = document.getElementById('toggle-controls');
-    const controlsContent = document.getElementById('controls-content');
-    const restartBtn = document.getElementById('restart-btn');
-    gameState.gameStartTime = Date.now();
-    gameState.errors = 0;
-    
-    toggleBtn.addEventListener('click', () => {
-        controlsContent.classList.toggle('hidden');
-    });
-    
-    // Sliders
-    document.getElementById('speed').addEventListener('input', (e) => {
-        gameState.settings.speed = parseInt(e.target.value);
-    });
-    
-    document.getElementById('max-length').addEventListener('input', (e) => {
-        gameState.settings.maxLength = parseInt(e.target.value);
-    });
-    
-    document.getElementById('spawn-rate').addEventListener('input', (e) => {
-        gameState.settings.spawnRate = parseFloat(e.target.value);
-        restartSpawnInterval();
-    });
-    
-    restartBtn.addEventListener('click', gameEngine.restartGame); 
 }
 
 function setupInputListener() {

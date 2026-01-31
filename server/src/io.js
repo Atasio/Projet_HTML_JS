@@ -38,6 +38,7 @@ function initIO(httpServer) {
       }
       gameService.startGame(room.roomId, room.gameState);
       console.log('Game started by', socket.userId)
+      io.to(room.roomId).emit('GameStarted');
     })
 
     socket.on('wordCompleted', (wordId, typedWord) => {
@@ -68,9 +69,15 @@ function initIO(httpServer) {
       const room = createRoom(socket.userId);
       socket.join(room.roomId);
       sendRoom(room);
-
-
     })
+
+    socket.on('gameSettings', (settings) => {
+      const room = roomService.getRoomFromPlayer(socket.id);
+      if (room) {
+        room.gameState.settings = settings;
+        io.to(room.roomId).emit('gameSettings', settings);
+      }
+    });
 
     socket.on('joinRoom', (codeId) => {
       console.log("Join room attempt from : ", socket.userId, " to room : ", codeId)

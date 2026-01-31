@@ -4,6 +4,8 @@ import gameParticles from "./gameParticles.js";
 import { io_client } from "./io_client.js";
 
 function spawnWord(word) {
+    console.log("Game isActive:", gameState.isGameActive);
+    if (!gameState.isGameActive) return;
     const wordObj = {
         id: word.id,
         text: word.text,
@@ -25,6 +27,7 @@ function spawnWord(word) {
     wordObj.element = wordElement;
 
     gameState.fallingWords.push(wordObj);
+    console.log("Word table:", gameState.fallingWords);
     animateWord(wordObj, gameState);
 
 }
@@ -47,8 +50,6 @@ function removeWord(wordId) {
     
     // Remove from array
     gameState.fallingWords.splice(index, 1);
-    gameState.errors++;
-    gameScoreHandler.updateErrors(gameState);
 }
 
 function animateWord(wordObj, gameState) {
@@ -64,7 +65,8 @@ function animateWord(wordObj, gameState) {
         
         // Check if reached bottom
         if (wordObj.y > bottomThreshold) {
-            gameScoreHandler.updateErrors(gameState);
+            gameState.errors++;
+            gameScoreHandler.updateErrors(gameState);   
             removeWord(wordObj.id, false);
             // gameState.combo = 1;
             // updateCombo();
