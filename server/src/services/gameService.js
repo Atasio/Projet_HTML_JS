@@ -6,18 +6,14 @@ function startGame(roomdId, gameState) {
     loadWords();
     gameState.isGameActive = true;
     gameState.gameStartTime = Date.now();
-    gameState.errors = 0;
     console.log("Game started at", gameState.gameStartTime);
     startSpawning(roomdId, gameState);
 }
 
 function createGameState(){
     return  {
-    score: 0,
-    errors: 0,
-    combo: 1,
-    wordsTyped: 0,
     maxWords: 100,
+    maxErrors: 5,
     fallingWords: [],
     gameStartTime: null,
     isGameActive: false,
@@ -27,14 +23,13 @@ function createGameState(){
         spawnRate: 2
     }};
 }
+
 // === WORD MANAGEMENT ===
 let wordsList = [];
-
 
 async function loadWords() {
     const words = await wordsService.getAllWords();
     if (!words) {
-        // Fallback words si le fichier n'existe pas
         wordsList = generateFallbackWords();
     } else {
         wordsList = words;
@@ -45,10 +40,7 @@ function startSpawning(roomId, gameState) {
     gameState.spawnInterval = setInterval(() => {
         if (gameState.fallingWords.length < gameState.maxWords && gameState.isGameActive == true) {
             spawnWord(roomId, gameState);
-        } 
-        // else if (gameState.fallingWords.length >= gameState.maxWords) {
-        //     endGame(roomId, gameState);
-        // }
+        }
     }, gameState.settings.spawnRate * 1000);
 }
 
@@ -72,15 +64,31 @@ function restartSpawnInterval(roomId, gameState) {
     startSpawning(roomId, gameState);
 }
 
-function endGame(gameState) {
+function endGame(roomId, gameState, players) {
     gameState.isGameActive = false;
     clearInterval(gameState.spawnInterval);
     
-    // Stop falling words
     gameState.fallingWords.forEach(word => {
         if (word.animationId) {
             cancelAnimationFrame(word.animationId);
         }
+    });
+    
+    gameState.fallingWords = [];
+    
+    // Convertir la Map des joueurs en array pour l'envoi
+    const playersData = Array.from(players.entries()).map(([userId, playerData]) => ({
+        userId,
+        score: playerData.score,
+        combo: playerData.combo,
+        wordsTyped: playerData.wordsTyped,
+        errors: playerData.errors
+    }));
+    
+    // Notifier les clients
+    io.sendGameEnded(roomId, {
+        players: playersData,
+        totalTime: Date.now() - gameState.gameStartTime
     });
 }
 
@@ -94,22 +102,78 @@ function getRandomWord(gameState) {
 }
 
 // === WORD MATCH ===
-function handleWordMatch(gameState, wordId, typedWord) {
-    console.log("handleWordMatch called with wordId:", wordId);
-    console.log("current fallingWords:", gameState.fallingWords);
-    const wordObj = gameState.fallingWords.find(word => word.id === wordId);
-    console.log("Handling word match for:", wordObj);
-    if (!wordObj) return;
-    // Calculate score
-    const baseScore = wordObj.text.length * 3;
-    const scoreWithCombo = baseScore * gameState.combo;
+function handleWordMatch(playerState, wordId, typedWord, fallingWords) {
+    try {
+        console.log("handleWordMatch called with wordId:", wordId);
+        console.log("current fallingWords:", fallingWords);
+        
+        const wordIndex = fallingWords.findIndex(word => word.id === wordId);
+        if (wordIndex === -1) {
+            console.warn("Word not found:", wordId);
+            return { shouldEndGame: false };
+        }
 
-    gameState.score += scoreWithCombo;
-    gameState.combo = Math.min(gameState.combo + 0.5, 5);
-    gameState.wordsTyped++;
+        const wordObj = fallingWords[wordIndex];
+        console.log("Handling word match for:", wordObj);
 
+        // Vérifier si le mot tapé correspond
+        if (wordObj.text.toLowerCase() !== typedWord.toLowerCase()) {
+            console.warn("Word mismatch - expected:", wordObj.text, "got:", typedWord);
+            playerState.errors++;
+            playerState.combo = Math.max(playerState.combo - 0.5, 1);
+            fallingWords.splice(wordIndex, 1);
+            
+            // Vérifier si limite d'erreurs atteinte pour ce joueur
+            if (playerState.errors >= 5) {
+                return { shouldEndGame: true };
+            }
+            
+            return { shouldEndGame: false };
+        }
 
-    io.sendUpdateGameState(gameState.score, gameState.combo, gameState.wordsTyped);
+        // Calculate score
+        const baseScore = wordObj.text.length * 3;
+        const scoreWithCombo = baseScore * playerState.combo;
+
+        playerState.score += scoreWithCombo;
+        playerState.combo = Math.min(playerState.combo + 0.5, 5);
+        playerState.wordsTyped++;
+
+        // Retirer le mot de la liste
+        fallingWords.splice(wordIndex, 1);
+
+        // Vérifier si tous les mots sont tapés
+        if (playerState.wordsTyped >= 100) {
+            return { shouldEndGame: true };
+        }
+
+        return { shouldEndGame: false };
+    } catch (error) {
+        console.error("Error in handleWordMatch:", error);
+        return { shouldEndGame: false, error: error.message };
+    }
 }
 
-export default { startGame, handleWordMatch, createGameState };
+function handleWordMissed(playerState, wordId, fallingWords) {
+    try {
+        const wordIndex = fallingWords.findIndex(word => word.id === wordId);
+        if (wordIndex === -1) {
+            return { shouldEndGame: false };
+        }
+
+        fallingWords.splice(wordIndex, 1);
+        playerState.errors++;
+        playerState.combo = Math.max(playerState.combo - 1, 1);
+
+        if (playerState.errors >= 5) {
+            return { shouldEndGame: true };
+        }
+        
+        return { shouldEndGame: false };
+    } catch (error) {
+        console.error("Error in handleWordMissed:", error);
+        return { shouldEndGame: false, error: error.message };
+    }
+}
+
+export default { startGame, handleWordMatch, handleWordMissed, createGameState, endGame };

@@ -20,13 +20,11 @@ function updateCombo(gameState) {
     const comboElement = document.getElementById('combo');
     comboElement.textContent = `×${gameState.combo.toFixed(1)}`;
     
-    // -------------------------------------------------------------------------------------------------------------------------------------
     // Pulse animation on combo increase
     comboElement.style.animation = 'none';
     setTimeout(() => {
         comboElement.style.animation = 'pulse 1s ease-in-out infinite';
     }, 10);
-    // -------------------------------------------------------------------------------------------------------------------------------------
 }
 
 function updateProgress(gameState) {
@@ -38,11 +36,8 @@ function updateProgress(gameState) {
 
 function updateErrors(gameState) {
     console.log("Updating errors:", gameState.errors);
-    const maxErrors = 10;
-    if(gameState.errors >= maxErrors) {
-        gameState.errors = maxErrors;
-        gameEngine.endGame();
-    }
+    const maxErrors = gameState.maxErrors || 5;
+    
     const percentage = (gameState.errors / maxErrors) * 100;
     document.getElementById('progress-bar-errors').style.width = percentage + '%';
     document.getElementById('progress-text-errors').textContent = 

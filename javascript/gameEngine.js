@@ -25,12 +25,21 @@ function showEndGameDialog() {
     const seconds = totalTime % 60;
     const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     
+    // Déterminer la raison de fin
+    let endReason = '';
+    if (gameState.errors >= (gameState.maxErrors || 5)) {
+        endReason = '❌ Trop d\'erreurs';
+    } else if (gameState.wordsTyped >= gameState.maxWords) {
+        endReason = '🎯 Tous les mots tapés !';
+    }
+    
     // Créer l'overlay
     const overlay = document.createElement('div');
     overlay.id = 'dialog-overlay';
     overlay.innerHTML = `
         <div class="dialog-box end-game-dialog">
             <h2 class="dialog-title">🎉 Partie terminée !</h2>
+            ${endReason ? `<p class="end-reason">${endReason}</p>` : ''}
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-label">Score final</div>
@@ -43,6 +52,10 @@ function showEndGameDialog() {
                 <div class="stat-item">
                     <div class="stat-label">Temps</div>
                     <div class="stat-value-big">${timeStr}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Erreurs</div>
+                    <div class="stat-value-big">${gameState.errors}/${gameState.maxErrors || 5}</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Combo max</div>
@@ -115,6 +128,28 @@ function showEndGameDialog() {
         overlay.classList.add('fade-out');
         setTimeout(() => overlay.remove(), 300);
     }
+}
+
+function restartGame() {
+    // Réinitialiser le game state
+    gameState.score = 0;
+    gameState.errors = 0;
+    gameState.combo = 1;
+    gameState.wordsTyped = 0;
+    gameState.fallingWords = [];
+    gameState.isGameActive = false;
+    
+    // Nettoyer tous les mots restants
+    document.getElementById('word-zone').innerHTML = '';
+    
+    // Mettre à jour l'affichage
+    gameScoreHandler.updateScore(gameState);
+    gameScoreHandler.updateCombo(gameState);
+    gameScoreHandler.updateProgress(gameState);
+    gameScoreHandler.updateErrors(gameState);
+    
+    // Redémarrer
+    io_client.sendStartGame();
 }
 
 function startGame() {

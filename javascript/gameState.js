@@ -4,6 +4,7 @@ const gameState = {
     combo: 1,
     wordsTyped: 0,
     maxWords: 100,
+    maxErrors: 5,
     fallingWords: [],
     gameStartTime: null,
     isGameActive: false,

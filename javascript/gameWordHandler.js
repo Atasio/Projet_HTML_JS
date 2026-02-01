@@ -33,7 +33,9 @@ function spawnWord(word) {
 }
 
 function removeWord(wordId) {
-    const index = gameState.fallingWords.findIndex(w => w.id === wordId);    
+    const index = gameState.fallingWords.findIndex(w => w.id === wordId);
+    if (index === -1) return;
+    
     const wordObj = gameState.fallingWords[index];
     //console.log("Removing word:", wordObj);
     
@@ -54,6 +56,11 @@ function removeWord(wordId) {
 
 function animateWord(wordObj, gameState) {
     const animate = () => {
+        if (!gameState.isGameActive) {
+            // Si le jeu n'est plus actif, arrêter l'animation
+            return;
+        }
+        
         wordObj.y += wordObj.speed;
         wordObj.element.style.top = wordObj.y + 'px';
         
@@ -65,11 +72,11 @@ function animateWord(wordObj, gameState) {
         
         // Check if reached bottom
         if (wordObj.y > bottomThreshold) {
-            gameState.errors++;
-            gameScoreHandler.updateErrors(gameState);   
-            removeWord(wordObj.id, false);
-            // gameState.combo = 1;
-            // updateCombo();
+            // Notifier le serveur du mot manqué
+            io_client.sendWordMissed(wordObj.id);
+            
+            // Le serveur enverra updateGameState, pas besoin de mettre à jour localement
+            removeWord(wordObj.id);
             return;
         }
         
@@ -87,32 +94,22 @@ function handleWordMatch(wordObj, typedWord) {
     console.log("typedWord:", typedWord);
     io_client.sendWordCompleted(wordObj.id, typedWord);
     
-    // Calculate score
+    // Calculate score pour affichage visuel (sera confirmé par le serveur)
     const baseScore = wordObj.text.length * 3;
     const scoreWithCombo = baseScore * gameState.combo;
-    gameState.score += scoreWithCombo;
     
-    // -------------------------------------------------------------------------------------------------------------------------------------
     // Show score popup
     gameScoreHandler.showScorePopup(scoreWithCombo, wordObj.x, wordObj.y);
     
     // Create particles
     gameParticles.createParticles(wordObj.x + element.offsetWidth / 2, wordObj.y + element.offsetHeight / 2);
-    // -------------------------------------------------------------------------------------------------------------------------------------
 
-    // Update combo
-    gameState.combo = Math.min(gameState.combo + 0.5, 5);
-    gameScoreHandler.updateCombo(gameState);
-    
-    // Update stats
-    gameState.wordsTyped++;
-    gameScoreHandler.updateScore(gameState);
-    gameScoreHandler.updateProgress(gameState);
+    // Le serveur mettra à jour le score, combo, wordsTyped via updateGameState
     
     // Remove word with animation
     setTimeout(() => {
         element.classList.add('destroying');
-        setTimeout(() => removeWord(wordObj.id, true), 500);
+        setTimeout(() => removeWord(wordObj.id), 500);
     }, 100);
 }
 

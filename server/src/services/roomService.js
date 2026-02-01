@@ -2,12 +2,13 @@ import gameService from './gameService.js';
 const rooms = [];
 
 function createRoom(socketId) {
-    const roomId = generateUniqueRoomId(); // On génère un room id unique mais ce n'est pas le code
-    const codeId = generateUniqueCodeId(); // Code à 10 chiffres pour rejoindre la room
+    const roomId = generateUniqueRoomId();
+    const codeId = generateUniqueCodeId();
     const playerState = {
         score: 0,
-        combo: 0,
+        combo: 1,
         wordsTyped: 0,
+        errors: 0
     };
     const room = {
         roomId: roomId,
@@ -30,8 +31,9 @@ function joinRoom(codeId, userID) {
     if (room) {
         room.players.set(userID, {
             score: 0,
-            combo: 0,
+            combo: 1,
             wordsTyped: 0,
+            errors: 0
         });
         return true;
     }
@@ -51,15 +53,22 @@ function leaveRoom(userID) {
 }
 
 function mapToClientData(room) {
+    // Convertir la Map en Array pour l'envoyer au client
+    const playersArray = Array.from(room.players.entries()).map(([userId, playerData]) => ({
+        userId,
+        score: playerData.score,
+        combo: playerData.combo,
+        wordsTyped: playerData.wordsTyped,
+        errors: playerData.errors
+    }));
+
     return {
         roomId: room.roomId,
         codeId: room.codeId,
-        players: room.players.length,
+        players: playersArray,
         gameState: {
-            score: room.gameState.score,
-            combo: room.gameState.combo,
-            wordsTyped: room.gameState.wordsTyped,
             maxWords: room.gameState.maxWords,
+            maxErrors: room.gameState.maxErrors,
             isGameActive: room.gameState.isGameActive,
             settings: room.gameState.settings
         }
