@@ -1546,3 +1546,117 @@ input[type="range"]::-moz-range-thumb {
         text-align: center;
     }
 }
+
+/* === QUIT BUTTON (Haut Droite) === */
+#quit-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 107, 107, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 107, 107, 0.4);
+    border-radius: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#quit-btn:hover {
+    background: rgba(255, 107, 107, 0.3);
+    border-color: rgba(255, 107, 107, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+}
+
+#quit-btn:active {
+    transform: translateY(0);
+}
+
+.quit-icon {
+    font-size: 1.3rem;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+}
+
+.quit-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Variante compacte (icône seulement) */
+#quit-btn.compact .quit-text {
+    display: none;
+}
+
+#quit-btn.compact {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+}
+
+#quit-btn.compact .quit-icon {
+    font-size: 1.5rem;
+}
+
+/* Animation au chargement */
+#quit-btn {
+    animation: fadeInDown 0.5s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    #quit-btn {
+        top: 15px;
+        right: 15px;
+        padding: 10px 16px;
+    }
+    
+    .quit-icon {
+        font-size: 1.2rem;
+    }
+    
+    .quit-text {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Mode compact sur très petit écran */
+    #quit-btn {
+        width: 45px;
+        height: 45px;
+        padding: 0;
+        border-radius: 50%;
+        justify-content: center;
+        top: 10px;
+        right: 10px;
+    }
+    
+    .quit-text {
+        display: none;
+    }
+    
+    .quit-icon {
+        font-size: 1.4rem;
+    }
+}

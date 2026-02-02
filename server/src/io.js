@@ -154,6 +154,21 @@ function initIO(httpServer) {
         }
       });
 
+      socket.on('endGame', () => {
+        console.log("endGame received from ", socket.userId)
+        try {
+          const room = roomService.getRoomFromPlayer(socket.userId);
+          if (room) {
+            gameService.endGame(room.roomId, room.gameState, room.players);
+          } else {
+            socket.emit('error', { message: 'Room not found' });
+          }
+        } catch (error) {
+          console.error('Error in endGame:', error);
+          socket.emit('error', { message: 'Error ending game', details: error.message });
+        }
+      });
+
       socket.on('joinRoom', (codeId) => {
         try {
           console.log("Join room attempt from : ", socket.userId, " to room : ", codeId)

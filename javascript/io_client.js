@@ -173,6 +173,11 @@ function sendStartGame() {
   socket.emit("startGame");
 }
 
+function sendEndGame() {
+  console.log("Sending endGame");
+  socket.emit("endGame");
+}
+
 function sendCreateRoom() {
   console.log("send : createRoom")
   socket.emit("createRoom");
@@ -189,5 +194,6 @@ export const io_client = {
   sendStartGame,
   sendCreateRoom,
   sendGameSettings,
-  sendJoinRoom
+  sendJoinRoom,
+  sendEndGame
 };
