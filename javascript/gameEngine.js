@@ -85,6 +85,10 @@ function showEndGameDialog() {
     
     // Event listeners
     document.getElementById('dialog-menu').addEventListener('click', () => {
+        // TO-DO : Ne pas appeller sendRestartGame puis sensEndGame car pas maintenable
+        // - Faire une fonction spécifique pour quitter la partie
+        io_client.sendRestartGame();
+        io_client.sendEndGame();
         window.location.href = '../index.html';
     });
     
