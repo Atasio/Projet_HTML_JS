@@ -13,6 +13,7 @@ window.addEventListener("load", async () => {
     if (gameState.isGameActive) {
         document.getElementById('start-screen').style.display = 'none';
     }
+    copyRoomButtonListener();
 });
 
 function startGameOnButtonStartClick() {
@@ -38,18 +39,14 @@ function resizeCanvas() {
 function startGame() {
     updateTimer();
     io_client.sendStartGame();
-
 }
 
 function setupInputListener() {
     const input = document.getElementById('word-input');
-    
     input.addEventListener('input', (e) => {
         gameInputHandler.handleInputChange(input, e.target.value, gameState);
     });
 }
-
-
 
 function updateTimer() {
     setInterval(() => {
@@ -63,3 +60,46 @@ function updateTimer() {
     }, 1000);
 }
 
+function copyRoomButtonListener() {
+    const copyButton = document.getElementById('copyButton');
+    const roomCode = document.getElementById('roomCode');
+    if (copyButton && roomCode) {
+        copyButton.addEventListener('click', async () => {
+            const code = roomCode.textContent;
+            
+            try {
+                // Copier dans le presse-papier
+                await navigator.clipboard.writeText(code);
+                
+                // Feedback visuel
+                copyButton.textContent = 'Copié !';
+                copyButton.classList.add('copied');
+                
+                // Retour à l'état normal après 2 secondes
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy Code';
+                    copyButton.classList.remove('copied');
+                }, 2000);
+                
+            } catch (err) {
+                console.error('Erreur lors de la copie:', err);
+                
+                // Fallback pour les navigateurs plus anciens
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                copyButton.textContent = 'Copié !';
+                copyButton.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy Code';
+                    copyButton.classList.remove('copied');
+                }, 2000);
+            }
+        });
+    }
+}
