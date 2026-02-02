@@ -1,4 +1,5 @@
 import gameEngine from "./gameEngine.js";
+import { getUserId } from "./userIdentification.js";
 
 function showScorePopup(score, x, y) {
     const popup = document.createElement('div');
@@ -17,6 +18,60 @@ function updateUi(playerData, maxWords, maxErrors) {
     updateScore(playerData);
     updateProgress(playerData, maxWords);
     updateErrors(playerData, maxErrors);
+}
+
+// function updateRoomPlayersDisplay(roomstate){
+//     console.log("Roomstate: ", roomstate.players);
+//     const playersList = document.getElementById('playersInfo');
+//     for (const playerId in roomstate.players){
+//         console.log(playerId);
+//         const player = roomstate.players[playerId];
+//         console.log("Player: ", player);
+
+//         // Display player inside list
+//         playerElement = document.createElement('div');
+//         playerElement.id = `player-${playerId}`;
+//         playerElement.className = 'player-entry';
+//         playersList.appendChild(playerElement);
+//     }
+// }
+
+function updateRoomPlayersDisplay(roomstate) {
+    console.log("Roomstate: ", roomstate.players);
+    const playersList = document.getElementById('playersInfo');
+    
+    // Vider la liste existante
+    playersList.innerHTML = '';
+    
+    // Convertir en tableau et trier (hôte en premier)
+    const playersArray = Object.entries(roomstate.players).sort(([, a], [, b]) => {
+        if (a.isHost) return -1;
+        if (b.isHost) return 1;
+        return 0;
+    });
+
+    const currentUserId = getUserId();
+    
+    // Parcourir les joueurs
+    playersArray.forEach(([playerId, player]) => {
+        console.log("Player: ", player);
+
+        // Créer un élément <li> pour chaque joueur
+        const playerElement = document.createElement('li');
+        playerElement.id = `player-${player.userId}`;
+        
+        // Afficher le nom du joueur
+        let playerName;
+        if(player.userId === currentUserId) {
+            playerName = `(Vous) Joueur ${player.userId}`;
+        } else {
+            playerName = `Joueur ${player.userId}`;
+        }
+        playerElement.textContent = playerName;
+        
+        // Ajouter à la liste
+        playersList.appendChild(playerElement);
+    });
 }
 
 function updateScore(playerData) {
@@ -49,4 +104,4 @@ function updateErrors(playerData, maxErrors) {
     document.getElementById('progress-text-errors').textContent = `${playerData.errors}/${maxErrors} erreurs`;
 }
 
-export default { showScorePopup, updateUi, updateScore, updateCombo, updateProgress, updateErrors };
+export default { showScorePopup, updateUi, updateScore, updateCombo, updateProgress, updateErrors, updateRoomPlayersDisplay };

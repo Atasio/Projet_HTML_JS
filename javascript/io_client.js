@@ -6,6 +6,7 @@ import { getUserId } from "./userIdentification.js";
 import roomHandler from "./roomHandler.js"
 import gameEngine from "./gameEngine.js";
 import gameScoreHandler from "./gameScoreHandler.js";
+import gameInitialisation from "./gameInitialisation.js";
 
 const socket = io("http://localhost:3000",
   {
@@ -29,7 +30,6 @@ socket.on("playerUpdate", (data) => {
   if (data.userId === getUserId()) {  
     gameScoreHandler.updateUi(data, gameState.maxWords, gameState.maxErrors);
   }
-  
   // TODO: Afficher aussi les scores des autres joueurs si besoin
 })
 
@@ -59,6 +59,8 @@ socket.on("roomJoined", (room) => {
   gameState.isGameActive = room.gameState.isGameActive;
   gameState.settings = room.gameState.settings;
   roomHandler.displayRoomCode(room.codeId);
+  gameScoreHandler.updateRoomPlayersDisplay(roomState);
+  //gameScoreHandler.updateUi(myPlayer, gameState.maxWords, gameState.maxErrors);
 })
 
 socket.on("roomInfo", (room) => {
@@ -74,6 +76,7 @@ socket.on("roomInfo", (room) => {
   gameState.gameStartTime = room.gameState.gameStartTime;
 
   roomHandler.displayRoomCode(room.codeId);
+  gameScoreHandler.updateRoomPlayersDisplay(roomState);
   gameScoreHandler.updateUi(room.players.find(p => p.userId === getUserId()), gameState.maxWords, gameState.maxErrors);
   gameEngine.updateStartButton(gameState.isGameActive);
 });
@@ -82,7 +85,9 @@ socket.on("GameStarted", () => {
   console.log("Game Started");
   gameState.isGameActive = true;
   gameState.gameStartTime = Date.now();
+  gameInitialisation.setupInputListener();
   gameEngine.startGame();
+  gameScoreHandler.updateRoomPlayersDisplay(roomState);
 })
 
 socket.on("gameEnded", (endGameData) => {
