@@ -1,4 +1,5 @@
 const playerState = {
+    name: null,
     socketId: null,
     userId: null,
     isReady: false,

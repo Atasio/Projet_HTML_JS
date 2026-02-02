@@ -63,9 +63,9 @@ function updateRoomPlayersDisplay(roomstate) {
         // Afficher le nom du joueur
         let playerName;
         if(player.userId === currentUserId) {
-            playerName = `(Vous) Joueur ${player.userId}`;
+            playerName = `(Vous) Joueur ${player.name}`;
         } else {
-            playerName = `Joueur ${player.userId}`;
+            playerName = `Joueur ${player.name}`;
         }
         playerElement.textContent = playerName;
         

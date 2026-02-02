@@ -5,6 +5,7 @@ function createRoom(socketId) {
     const roomId = generateUniqueRoomId();
     const codeId = generateUniqueCodeId();
     const playerState = {
+        name: generateRandomWord(),
         score: 0,
         combo: 1,
         wordsTyped: 0,
@@ -30,6 +31,7 @@ function joinRoom(codeId, userID) {
     const room = getRoomByCodeId(codeId)
     if (room) {
         room.players.set(userID, {
+            name: generateRandomWord(),
             score: 0,
             combo: 1,
             wordsTyped: 0,
@@ -56,6 +58,7 @@ function mapToClientData(room) {
     // Convertir la Map en Array pour l'envoyer au client
     const playersArray = Array.from(room.players.entries()).map(([userId, playerData]) => ({
         userId,
+        name: playerData.name,
         score: playerData.score,
         combo: playerData.combo,
         wordsTyped: playerData.wordsTyped,
@@ -107,6 +110,12 @@ function getRoomFromPlayer(userID) {
         }
     }
     return null;
+}
+
+function generateRandomWord(){
+    let i = Math.floor(Math.random() * 5);
+    const fallbackWords = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo'];
+    return fallbackWords[i];
 }
 
 export default {
