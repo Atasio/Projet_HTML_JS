@@ -2,7 +2,6 @@ import { gameState } from "./gameState.js";
 import gameParticles from "./gameParticles.js";
 import { io_client } from "./io_client.js";
 import gameInputHandler from "./gameInputHandler.js";
-import gameEngine from "./gameEngine.js";
 
 let canvas;
 

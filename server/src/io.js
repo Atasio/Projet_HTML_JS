@@ -44,6 +44,7 @@ function initIO(httpServer) {
           gameService.startGame(room.roomId, room.gameState);
           console.log('Game started by', socket.userId)
           io.to(room.roomId).emit('GameStarted');
+          sendPlayerUpdate(room.roomId, socket.userId, room.players.get(socket.userId));
         } catch (error) {
           console.error('Error in startGame:', error);
           socket.emit('error', { message: 'Error starting game', details: error.message });
