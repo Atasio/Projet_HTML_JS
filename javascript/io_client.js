@@ -71,9 +71,11 @@ socket.on("roomInfo", (room) => {
   gameState.maxErrors = room.gameState.maxErrors;
   gameState.isGameActive = room.gameState.isGameActive;
   gameState.settings = room.gameState.settings;
+  gameState.gameStartTime = room.gameState.gameStartTime;
 
   roomHandler.displayRoomCode(room.codeId);
   gameScoreHandler.updateUi(room.players.find(p => p.userId === getUserId()), gameState.maxWords, gameState.maxErrors);
+  gameEngine.updateStartButton(gameState.isGameActive);
 });
 
 socket.on("GameStarted", () => {
@@ -175,6 +177,10 @@ function sendJoinRoom(roomId){
   socket.emit("joinRoom", roomId)
 }
 
+function sendLeaveRoom(userId){
+  console.log("Trying to leave room")
+  socket.emit("leaveRoom", userId)
+}
 export const io_client = {
   sendWordCompleted,
   sendWordMissed,
@@ -183,5 +189,6 @@ export const io_client = {
   sendCreateRoom,
   sendGameSettings,
   sendJoinRoom,
+  sendLeaveRoom,
   sendEndGame
 };
