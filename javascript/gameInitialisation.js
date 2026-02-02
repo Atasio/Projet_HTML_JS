@@ -10,6 +10,10 @@ window.addEventListener("load", async () => {
     setupInputListener();
     gameParticles.animateParticles();
     startGameOnButtonStartClick();
+    // Hide StartGame if game is already active
+    if (gameState.isGameActive) {
+        document.getElementById('start-screen').style.display = 'none';
+    }
     copyRoomButtonListener();
     leaveRoomButtonListener();
 });

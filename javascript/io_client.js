@@ -26,19 +26,8 @@ socket.on("spawnWord", (word) => {
 
 socket.on("playerUpdate", (data) => {
   console.log("Player update received", data);
-  
-  // Si c'est notre joueur, mettre à jour notre état local
-  if (data.userId === getUserId()) {
-    gameState.score = data.score;
-    gameState.combo = data.combo;
-    gameState.wordsTyped = data.wordsTyped;
-    gameState.errors = data.errors;
-    
-    // Mettre à jour l'affichage
-    gameScoreHandler.updateScore(gameState);
-    gameScoreHandler.updateCombo(gameState);
-    gameScoreHandler.updateProgress(gameState);
-    gameScoreHandler.updateErrors(gameState);
+  if (data.userId === getUserId()) {  
+    gameScoreHandler.updateUi(data, gameState.maxWords, gameState.maxErrors);
   }
   
   // TODO: Afficher aussi les scores des autres joueurs si besoin
@@ -78,20 +67,13 @@ socket.on("roomInfo", (room) => {
   roomState.roomId = room.roomId;
   roomState.players = room.players;
   
-  // Récupérer nos propres stats
-  const myPlayer = room.players.find(p => p.userId === getUserId());
-  if (myPlayer) {
-    gameState.combo = myPlayer.combo;
-    gameState.score = myPlayer.score;
-    gameState.wordsTyped = myPlayer.wordsTyped;
-    gameState.errors = myPlayer.errors;
-  }
-  
   gameState.maxWords = room.gameState.maxWords;
   gameState.maxErrors = room.gameState.maxErrors;
   gameState.isGameActive = room.gameState.isGameActive;
   gameState.settings = room.gameState.settings;
+
   roomHandler.displayRoomCode(room.codeId);
+  gameScoreHandler.updateUi(room.players.find(p => p.userId === getUserId()), gameState.maxWords, gameState.maxErrors);
 });
 
 socket.on("GameStarted", () => {
@@ -178,6 +160,11 @@ function sendEndGame() {
   socket.emit("endGame");
 }
 
+function sendRestartGame() {
+  console.log("Sending restartGame");
+  socket.emit("restartGame");
+}
+
 function sendCreateRoom() {
   console.log("send : createRoom")
   socket.emit("createRoom");
@@ -192,6 +179,7 @@ export const io_client = {
   sendWordCompleted,
   sendWordMissed,
   sendStartGame,
+  sendRestartGame,
   sendCreateRoom,
   sendGameSettings,
   sendJoinRoom,

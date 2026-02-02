@@ -2,7 +2,6 @@ import { Server } from 'socket.io'
 import gameService from './services/gameService.js'
 import roomService from './services/roomService.js'
 
-
 let io
 
 function initIO(httpServer) {
@@ -50,7 +49,23 @@ function initIO(httpServer) {
           socket.emit('error', { message: 'Error starting game', details: error.message });
         }
       })
-
+      socket.on('restartGame', () => {
+        try {
+          let room = roomService.getRoomFromPlayer(socket.userId);
+          if (!room) {
+            room = createRoom(socket.userId);
+            socket.join(room.roomId);
+            sendRoom(room);
+          }
+          gameService.restartGame(room);
+          console.log('Game restarted by', socket.userId)
+          io.to(room.roomId).emit('GameStarted');
+          sendRoom(room);
+        } catch (error) {
+          console.error('Error in restartGame:', error);
+          socket.emit('error', { message: 'Error restarting game', details: error.message });
+        }
+      })
       socket.on('wordCompleted', (wordId, typedWord) => {
         try {
           console.log("wordId received:", wordId, " typedWord:", typedWord);
