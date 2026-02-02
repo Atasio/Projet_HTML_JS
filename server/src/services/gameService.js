@@ -10,6 +10,18 @@ function startGame(roomdId, gameState) {
     startSpawning(roomdId, gameState);
 }
 
+function restartGame(room) {
+    room.gameState.fallingWords = [];
+    room.players.forEach((player) => {
+        player.score = 0;
+        player.combo = 1;
+        player.wordsTyped = 0;
+        player.errors = 0;
+    });
+    console.log("Game restarted at", room.gameState.gameStartTime);
+    startGame(room.roomId, room.gameState);
+}
+
 function createGameState(){
     return  {
     maxWords: 100,
@@ -176,4 +188,4 @@ function handleWordMissed(playerState, wordId, fallingWords) {
     }
 }
 
-export default { startGame, handleWordMatch, handleWordMissed, createGameState, endGame };
+export default { startGame, restartGame, handleWordMatch, handleWordMissed, createGameState, endGame };

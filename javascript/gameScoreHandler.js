@@ -12,13 +12,20 @@ function showScorePopup(score, x, y) {
     setTimeout(() => popup.remove(), 1000);
 }
 
-function updateScore(gameState) {
-    document.getElementById('score').textContent = Math.floor(gameState.score);
+function updateUi(playerData, maxWords, maxErrors) {
+    updateCombo(playerData);
+    updateScore(playerData);
+    updateProgress(playerData, maxWords);
+    updateErrors(playerData, maxErrors);
 }
 
-function updateCombo(gameState) {
+function updateScore(playerData) {
+    document.getElementById('score').textContent = Math.floor(playerData.score);
+}
+
+function updateCombo(playerData) {
     const comboElement = document.getElementById('combo');
-    comboElement.textContent = `×${gameState.combo.toFixed(1)}`;
+    comboElement.textContent = `×${playerData.combo.toFixed(1)}`;
     
     // Pulse animation on combo increase
     comboElement.style.animation = 'none';
@@ -27,21 +34,19 @@ function updateCombo(gameState) {
     }, 10);
 }
 
-function updateProgress(gameState) {
-    const percentage = (gameState.wordsTyped / gameState.maxWords) * 100;
+function updateProgress(playerData, maxWords) {
+    const percentage = (playerData.wordsTyped / maxWords) * 100;
     document.getElementById('progress-bar').style.width = percentage + '%';
-    document.getElementById('progress-text').textContent = 
-        `${gameState.wordsTyped}/${gameState.maxWords} mots`;
+    document.getElementById('progress-text').textContent = `${playerData.wordsTyped}/${maxWords} mots`;
 }
 
-function updateErrors(gameState) {
-    console.log("Updating errors:", gameState.errors);
-    const maxErrors = gameState.maxErrors || 5;
+function updateErrors(playerData, maxErrors) {
+    console.log("Updating errors:", playerData.errors);
+    const maxErrorsValue = maxErrors;
     
-    const percentage = (gameState.errors / maxErrors) * 100;
+    const percentage = (playerData.errors / maxErrorsValue) * 100;
     document.getElementById('progress-bar-errors').style.width = percentage + '%';
-    document.getElementById('progress-text-errors').textContent = 
-        `${gameState.errors}/${maxErrors} erreurs`;
+    document.getElementById('progress-text-errors').textContent = `${playerData.errors}/${maxErrors} erreurs`;
 }
 
-export default { showScorePopup, updateScore, updateCombo, updateProgress, updateErrors };
+export default { showScorePopup, updateUi, updateScore, updateCombo, updateProgress, updateErrors };

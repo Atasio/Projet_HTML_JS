@@ -116,14 +116,7 @@ function showEndGameDialog() {
             document.getElementById('dialog-save').click();
         }
     });
-    
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
-            closeDialog();
-            restartGame();
-        }
-    });
-    
+
     function closeDialog() {
         overlay.classList.add('fade-out');
         setTimeout(() => overlay.remove(), 300);
@@ -131,14 +124,6 @@ function showEndGameDialog() {
 }
 
 function restartGame() {
-    // Réinitialiser le game state
-    gameState.score = 0;
-    gameState.errors = 0;
-    gameState.combo = 1;
-    gameState.wordsTyped = 0;
-    gameState.fallingWords = [];
-    gameState.isGameActive = false;
-    
     // Nettoyer tous les mots restants
     document.getElementById('word-zone').innerHTML = '';
     
@@ -149,7 +134,7 @@ function restartGame() {
     gameScoreHandler.updateErrors(gameState);
     
     // Redémarrer
-    io_client.sendStartGame();
+    io_client.sendRestartGame();
 }
 
 function startGame() {
@@ -159,4 +144,4 @@ function startGame() {
     document.getElementById('word-input').focus();
 }
 
-export default { endGame, startGame };
+export default { endGame, startGame, restartGame };
