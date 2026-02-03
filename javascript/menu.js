@@ -1,4 +1,5 @@
 import { io_client } from "./io_client.js";
+import settings from "./settings.js";
 
 // === EVENT LISTENERS ===
 const solo = document.getElementById('solo-btn');
@@ -11,11 +12,13 @@ join_room.addEventListener('click', () => {
 
 create_room.addEventListener('click', () => {
     io_client.sendCreateRoom()
+    settings.sendSettingsToServer()
     window.location.href = '../game.html';
 });
 
 solo.addEventListener('click', () => {
     io_client.sendCreateRoom() // A laisser si on veut que le solo passe par une room
+    settings.sendSettingsToServer()
     window.location.href = '../game.html';
 });
 
@@ -190,30 +193,3 @@ function showRoomCodeDialog() {
         setTimeout(() => overlay.remove(), 300);
     }
 }
-
-// Ajouter à menu.js
-
-solo.addEventListener('click', () => {
-    // Récupérer et envoyer les paramètres
-    const settings = getSettings();
-    sendSettingsToServer();
-    
-    // Stocker les paramètres pour la page solo
-    sessionStorage.setItem('gameSettings', JSON.stringify(settings));
-    
-    window.location.href = 'solo.html';
-});
-
-create_room.addEventListener('click', () => {
-    // Récupérer et envoyer les paramètres
-    const settings = getSettings();
-    
-    // TODO: Créer la room côté serveur et récupérer l'ID
-    const roomId = 'TEMP_ROOM_ID'; // À remplacer par la vraie room ID du serveur
-    sendSettingsToServer(roomId);
-    
-    // Stocker les paramètres pour la page de création
-    sessionStorage.setItem('gameSettings', JSON.stringify(settings));
-    
-    window.location.href = 'create_room.html';
-});

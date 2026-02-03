@@ -154,6 +154,7 @@ function sendWordMissed(wordId) {
 }
 
 function sendGameSettings(settings) {
+  console.log("Sending gameSettings", settings);  
   socket.emit("gameSettings", settings);
 }
 
