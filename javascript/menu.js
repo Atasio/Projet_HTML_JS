@@ -15,7 +15,7 @@ create_room.addEventListener('click', () => {
 });
 
 solo.addEventListener('click', () => {
-    console.log("Solo mode selected");
+    io_client.sendCreateRoom() // A laisser si on veut que le solo passe par une room
     window.location.href = '../game.html';
 });
 
