@@ -6,12 +6,16 @@ import gameInputHandler from "./gameInputHandler.js";
 let canvas;
 
 window.addEventListener("load", async () => {
+    // Ne s'exécute que sur game.html
+    const startScreen = document.getElementById('start-screen');
+    if (!startScreen) return;
+    
     //setupInputListener();
     gameParticles.animateParticles();
     startGameOnButtonStartClick();
     // Hide StartGame if game is already active
     if (!gameState.isGameActive) {
-        document.getElementById('start-screen').style.display = 'block';
+        startScreen.style.display = 'block';
     }
     copyRoomButtonListener();
     leaveRoomButtonListener();
@@ -19,7 +23,8 @@ window.addEventListener("load", async () => {
 
 function startGameOnButtonStartClick() {
     console.log("Setting up start button listener");
-    document.getElementById('start-btn').addEventListener('click', () => {
+    const startbutton = document.getElementById('start-btn')
+    startbutton?.addEventListener('click', () => {
         document.getElementById('start-screen').style.display = 'none';
         startGame();
     });
