@@ -1147,6 +1147,82 @@ body {
     cursor: not-allowed;
 }
 
+/* === PLAYERS RANKING SECTION === */
+.players-ranking-section {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(192, 192, 192, 0.1) 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid rgba(255, 215, 0, 0.2);
+}
+
+.ranking-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.players-ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.player-rank-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    border-left: 4px solid rgba(102, 126, 234, 0.3);
+}
+
+.player-rank-item:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateX(3px);
+    border-left-color: rgba(102, 126, 234, 0.6);
+}
+
+.player-rank-item.rank-1 {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+    border-left-color: #ffd700;
+}
+
+.player-rank-item.rank-2 {
+    background: linear-gradient(135deg, rgba(192, 192, 192, 0.15), rgba(192, 192, 192, 0.05));
+    border-left-color: #c0c0c0;
+}
+
+.player-rank-item.rank-3 {
+    background: linear-gradient(135deg, rgba(205, 127, 50, 0.15), rgba(205, 127, 50, 0.05));
+    border-left-color: #cd7f32;
+}
+
+.rank-medal {
+    font-size: 1.4rem;
+    min-width: 30px;
+    text-align: center;
+}
+
+.player-name-rank {
+    flex: 1;
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+.player-score-rank {
+    font-weight: bold;
+    color: #667eea;
+    font-size: 1.1rem;
+    min-width: 60px;
+    text-align: right;
+}
+
 /* === SETTINGS PANEL (GAUCHE) === */
 #settings-panel {
     position: absolute;

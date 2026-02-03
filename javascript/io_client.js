@@ -105,8 +105,8 @@ socket.on("gameEnded", (endGameData) => {
     }
   }
   
-  // Afficher l'écran de fin
-  gameEngine.endGame();
+  // Afficher l'écran de fin avec les données des joueurs
+  gameEngine.endGame(endGameData?.players || []);
 })
 
 socket.on("error", (error) => {

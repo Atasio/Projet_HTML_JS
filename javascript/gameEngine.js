@@ -4,7 +4,7 @@ import { io_client } from "./io_client.js";
 import leaderboard from "./leaderboard.js";
 
 
-function endGame() {
+function endGame(playersData = []) {
     gameState.isGameActive = false;
     gameState.settings.spawnRate = 0;
     
@@ -15,10 +15,10 @@ function endGame() {
         }
     });
     
-    showEndGameDialog();
+    showEndGameDialog(playersData);
 }
 
-function showEndGameDialog() {
+function showEndGameDialog(playersData = []) {
     // Calculer les stats
     const totalTime = Math.floor((Date.now() - gameState.gameStartTime) / 1000);
     const minutes = Math.floor(totalTime / 60);
@@ -31,6 +31,37 @@ function showEndGameDialog() {
         endReason = '❌ Trop d\'erreurs';
     } else if (gameState.wordsTyped >= gameState.maxWords) {
         endReason = '🎯 Tous les mots tapés !';
+    }
+    
+    // Générer le classement des joueurs
+    let playersRankingHtml = '';
+    if (playersData.length > 0) {
+        // Trier les joueurs par score (décroissant)
+        const sortedPlayers = [...playersData].sort((a, b) => b.score - a.score);
+        
+        playersRankingHtml = `
+            <div class="players-ranking-section">
+                <h3 class="ranking-title">🏆 Classement de la partie</h3>
+                <div class="players-ranking-list">
+                    ${sortedPlayers.map((player, index) => {
+                        const rank = index + 1;
+                        let medalEmoji = '';
+                        if (rank === 1) medalEmoji = '🥇';
+                        else if (rank === 2) medalEmoji = '🥈';
+                        else if (rank === 3) medalEmoji = '🥉';
+                        else medalEmoji = `${rank}.`;
+                        
+                        return `
+                            <div class="player-rank-item rank-${rank}">
+                                <span class="rank-medal">${medalEmoji}</span>
+                                <span class="player-name-rank">${player.name}</span>
+                                <span class="player-score-rank">${Math.floor(player.score)}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
     }
     
     // Créer l'overlay
@@ -62,6 +93,8 @@ function showEndGameDialog() {
                     <div class="stat-value-big">×${gameState.maxCombo || gameState.combo}</div>
                 </div>
             </div>
+            
+            ${playersRankingHtml}
             
             <!-- Section Leaderboard -->
             <div class="leaderboard-section">

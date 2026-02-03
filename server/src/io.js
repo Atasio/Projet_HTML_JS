@@ -244,6 +244,7 @@ function sendPlayerUpdate(roomId, userId, playerState) {
   // Envoyer à tous les joueurs de la room (pour afficher les scores des autres)
   io.to(roomId).emit('playerUpdate', {
     userId,
+    name: playerState.name,
     score: playerState.score,
     combo: playerState.combo,
     wordsTyped: playerState.wordsTyped,

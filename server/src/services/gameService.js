@@ -91,6 +91,7 @@ function endGame(roomId, gameState, players) {
     // Convertir la Map des joueurs en array pour l'envoi
     const playersData = Array.from(players.entries()).map(([userId, playerData]) => ({
         userId,
+        name: playerData.name,
         score: playerData.score,
         combo: playerData.combo,
         wordsTyped: playerData.wordsTyped,
