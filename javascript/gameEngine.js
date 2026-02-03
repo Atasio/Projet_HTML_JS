@@ -148,4 +148,13 @@ function startGame() {
     document.getElementById('word-input').focus();
 }
 
-export default { endGame, startGame, restartGame };
+function updateStartButton(isGameActive) {
+    const startBtn = document.getElementById('start-btn');
+    if (isGameActive) {
+        startBtn.style.display = 'none';
+    } else {
+        startBtn.style.display = 'block';
+    }
+}
+
+export default { endGame, startGame, restartGame, updateStartButton };

@@ -27,6 +27,10 @@ function getRoomByCodeId(codeId){
   return room
 }
 
+function getPlayerFromRoom(room, userID) {
+    return room.players.get(userID);
+}
+
 function joinRoom(codeId, userID) {
     const room = getRoomByCodeId(codeId)
     if (room) {
@@ -43,13 +47,16 @@ function joinRoom(codeId, userID) {
 }
 
 function leaveRoom(userID) {
+    console.log(rooms)
     const room = getRoomFromPlayer(userID);
     if (room) {
         room.players.delete(userID);
+        console.log(`Player ${userID} left room ${room.codeId}`);
         // Si la room est vide, on la supprime
         if (room.players.size === 0) {
             clearInterval(room.gameState.spawnInterval);
             delete rooms[room.roomId];
+            console.log(`Room ${room.codeId} deleted because it is empty`);
         }
     }
 }
@@ -72,6 +79,7 @@ function mapToClientData(room) {
         gameState: {
             maxWords: room.gameState.maxWords,
             maxErrors: room.gameState.maxErrors,
+            gameStartTime: room.gameState.gameStartTime,
             isGameActive: room.gameState.isGameActive,
             settings: room.gameState.settings
         }
@@ -124,6 +132,7 @@ export default {
     leaveRoom,
     getRoomId,
     getRoomCodeId,
+    getPlayerFromRoom,
     getRoomFromPlayer,
     mapToClientData,
 };

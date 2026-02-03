@@ -27,7 +27,7 @@ function createGameState(){
     maxWords: 100,
     maxErrors: 5,
     fallingWords: [],
-    gameStartTime: null,
+    gameStartTime: Date.now(),
     isGameActive: false,
     settings: {
         speed: 5,

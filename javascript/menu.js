@@ -28,6 +28,8 @@ window.onload = function() {
     initCanvas();
     animateParticles();
     createAmbientParticles();
+    //Si déjà en jeu, prévenir le serveur que le joueur est dans le menu -> se déconecté de la game
+    io_client.sendLeaveRoom();
 };
 
 // === CANVAS SETUP ===

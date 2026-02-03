@@ -1,7 +1,7 @@
 function displayRoomCode(codeId) {
     const codeElement = document.getElementById("roomCode");
     if (codeElement) {
-        codeElement.textContent = ` ${codeId}`;
+        codeElement.textContent = `${codeId}`;
     }
 }
 

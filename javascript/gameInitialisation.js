@@ -10,8 +10,8 @@ window.addEventListener("load", async () => {
     gameParticles.animateParticles();
     startGameOnButtonStartClick();
     // Hide StartGame if game is already active
-    if (gameState.isGameActive) {
-        document.getElementById('start-screen').style.display = 'none';
+    if (!gameState.isGameActive) {
+        document.getElementById('start-screen').style.display = 'block';
     }
     copyRoomButtonListener();
     leaveRoomButtonListener();
@@ -67,7 +67,7 @@ function copyRoomButtonListener() {
     const roomCode = document.getElementById('roomCode');
     if (copyButton && roomCode) {
         copyButton.addEventListener('click', async () => {
-            const code = roomCode.textContent;
+            const code = roomCode.textContent.trim();
             
             try {
                 // Copier dans le presse-papier

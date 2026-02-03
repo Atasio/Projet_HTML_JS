@@ -28,6 +28,8 @@ function initIO(httpServer) {
       console.log('Player connected', socket.userId, 'with userId:', socket.userId)
       const room = roomService.getRoomFromPlayer(socket.userId)
       if (room) {
+        const player = room.players.get(socket.userId);
+        player.state = "connected"
         console.log("Player ", socket.userId, " connected back to ", room.roomId)
         socket.join(room.roomId)
         sendRoom(room)
@@ -56,7 +58,6 @@ function initIO(httpServer) {
           if (!room) {
             room = createRoom(socket.userId);
             socket.join(room.roomId);
-            sendRoom(room);
           }
           gameService.restartGame(room);
           console.log('Game restarted by', socket.userId)
@@ -131,12 +132,16 @@ function initIO(httpServer) {
 
       socket.on('disconnect', () => {
         try {
-          setTimeout(() => {
-            if (!roomService.getRoomFromPlayer(socket.userId)) {
-              roomService.leaveRoom(socket.userId);
-              console.log("Player leaved the room")
-            }
-          }, 5000)
+          const room = roomService.getRoomFromPlayer(socket.userId);
+          if (room) {
+            const player = room.players.get(socket.userId);
+            player.state = "disconnected";
+            setTimeout(() => {
+              if (player.state === "disconnected") {
+                roomService.leaveRoom(socket.userId);
+              }
+            }, 1000);
+          }
           console.log('Player disconnected', socket.userId)
         } catch (error) {
           console.error('Error in disconnect:', error);
@@ -207,6 +212,16 @@ function initIO(httpServer) {
     } catch (error) {
       console.error('Connection error:', error);
     }
+
+    socket.on('leaveRoom', () => {
+      try {
+        console.log("leaveRoom attempt from : ", socket.userId)
+        roomService.leaveRoom(socket.userId);
+      } catch (error) {
+        console.error('Error in leaveRoom:', error);
+        socket.emit('error', { message: 'Error leaving room', details: error.message });
+      }
+  })
   })
 }
 
@@ -220,7 +235,7 @@ function sendRoom(room) {
 }
 
 function sendSpawnWord(roomId, word) {
-  console.log('Sending spawnWord:', word);
+  // console.log('Sending spawnWord:', word);
   io.to(roomId).emit('spawnWord', word)
 }
 
