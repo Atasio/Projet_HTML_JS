@@ -1,0 +1,24 @@
+{
+  "name": "projet",
+  "type" : "module",
+  "version": "1.0.0",
+  "description": "Pour lancer le serveur web :  ``` python -m http.server 8000  ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Atasio/Projet_HTML_JS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Atasio/Projet_HTML_JS/issues"
+  },
+  "homepage": "https://github.com/Atasio/Projet_HTML_JS#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3"
+  }
+}

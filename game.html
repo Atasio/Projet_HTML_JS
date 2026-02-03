@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="png" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Word Rain - Typing Game</title>
+</head>
+<body>
+    <div id="roomInfo">
+        <h3>Code: <span id="roomCode"></span></h3>
+        <button id="copyButton">Copy Code</button>
+        <ul id="playersInfo"></ul>
+    </div>
+
+    <!-- Bouton Quitter (Haut Droite) -->
+    <button id="quit-btn" class="quit-button">
+        <span class="quit-icon">🚪</span>
+        <span class="quit-text">Quitter</span>
+    </button>
+
+    <!-- Game Container -->
+    <div id="game-container">
+        <!-- Background particles -->
+        <canvas id="particles"></canvas>
+        
+        <!-- Header avec stats -->
+        <header id="game-header">
+            <div class="stat-box">
+                <div class="stat-label">Score</div>
+                <div id="score" class="stat-value">0</div>
+            </div>
+            <div class="stat-box combo-box">
+                <div class="stat-label">Combo</div>
+                <div id="combo" class="stat-value">×1</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Temps</div>
+                <div id="timer" class="stat-value">0:00</div>
+            </div>
+        </header>
+
+        <!-- Zone de jeu pour les mots tombants -->
+        <div id="word-zone"></div>
+
+        <!-- Bouton commencer la partie -->
+        <div id="start-screen" style="display:none;">
+            <button id="start-btn">Commencer la partie</button>
+        </div>
+        <!-- Conteneur des deux barres -->
+        <div id="progress-wrapper">
+            <!-- Barre d'erreurs -->
+            <div class="progress-container">
+                <div id="progress-bar-errors"></div>
+                <span id="progress-text-errors" class="progress-text">0/10 erreurs</span>
+            </div>
+            
+            <!-- Barre de progression -->
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+                <span id="progress-text" class="progress-text">0/100 mots</span>
+            </div>
+        </div>
+    <div>
+
+    </div>
+
+        <!-- Input zone fixe en bas -->
+        <div id="input-zone">
+            <div id="input-glow"></div>
+            <input 
+                id="word-input" 
+                type="text" 
+                placeholder="Tapez les mots ici..." 
+                autocomplete="off"
+                spellcheck="false"
+            >
+        </div>
+    </div>
+    <script src="javascript/gameInitialisation.js" type="module"></script>
+</body>
+</html>
