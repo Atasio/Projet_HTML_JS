@@ -17,6 +17,8 @@ services:
       - app-network
     depends_on:
       - server
+    environment:
+      - SOCKET_IO_URL=http://localhost:3000
 
   server:
     build:

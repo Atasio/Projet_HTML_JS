@@ -1,0 +1,2 @@
+// Socket.io configuration - injected by Docker
+window.SOCKET_IO_URL = "${SOCKET_IO_URL}" || `${window.location.protocol}//${window.location.host}`;
