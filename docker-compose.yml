@@ -17,8 +17,7 @@ services:
       - app-network
     depends_on:
       - server
-    environment:
-      - SOCKET_IO_URL=https://wordsrain.pimous.dev:31090
+    environment: []
 
   server:
     build:
