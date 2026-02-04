@@ -8,10 +8,7 @@ import gameEngine from "./gameEngine.js";
 import gameScoreHandler from "./gameScoreHandler.js";
 import gameInitialisation from "./gameInitialisation.js";
 
-// Get Socket.io URL from window config or fallback to localhost
-const socketUrl = window.SOCKET_IO_URL || `${window.location.protocol}//${window.location.host}`;
-
-const socket = io(socketUrl,
+const socket = io("localhost:31091",
   {
     reconnectionDelayMax: 10000,
     auth: {
