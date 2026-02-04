@@ -8,7 +8,7 @@ import gameEngine from "./gameEngine.js";
 import gameScoreHandler from "./gameScoreHandler.js";
 import gameInitialisation from "./gameInitialisation.js";
 
-const socket = io("localhost:31091",
+const socket = io("https://wordsrain.pimous.dev",
   {
     reconnectionDelayMax: 10000,
     auth: {
