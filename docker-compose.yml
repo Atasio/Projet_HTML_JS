@@ -25,9 +25,6 @@ services:
     container_name: typing-game-server
     ports:
       - "3000:3000"
-    volumes:
-      - ./server:/app:ro
-      - /app/node_modules
     networks:
       - app-network
     environment:
