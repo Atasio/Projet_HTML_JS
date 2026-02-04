@@ -26,7 +26,7 @@ services:
       dockerfile: Dockerfile
     container_name: typing-game-server
     ports:
-      - "31090:31090"
+      - "31090:3000"
     networks:
       - app-network
     environment:
