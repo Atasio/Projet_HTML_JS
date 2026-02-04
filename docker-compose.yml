@@ -18,7 +18,7 @@ services:
     depends_on:
       - server
     environment:
-      - SOCKET_IO_URL=http://localhost:3000
+      - SOCKET_IO_URL=https://wordsrain.pimous.dev:31090
 
   server:
     build:
@@ -26,7 +26,7 @@ services:
       dockerfile: Dockerfile
     container_name: typing-game-server
     ports:
-      - "3000:3000"
+      - "31090:31090"
     networks:
       - app-network
     environment:
