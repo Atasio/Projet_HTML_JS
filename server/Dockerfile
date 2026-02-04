@@ -12,8 +12,8 @@ RUN npm install --production
 # Copy application files
 COPY . .
 
-# Expose port 3000
-EXPOSE 3000
+# Expose port 31090
+EXPOSE 31091
 
 # Start the application
 CMD ["node", "index.js"]

@@ -10,5 +10,5 @@ app.get('/', (req, res) => res.send('Server OK'))
 // Initialise Socket.io et injecte le serveur HTTP
 io.initIO(httpServer)
 
-httpServer.listen(3000, () => console.log('Server running on port 3000'))
+httpServer.listen(31091, () => console.log('Server running on port 31091'))
 
