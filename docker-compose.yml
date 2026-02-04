@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: typing-game-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./game.html:/usr/share/nginx/html/game.html:ro
+      - ./style.css:/usr/share/nginx/html/style.css:ro
+      - ./javascript:/usr/share/nginx/html/javascript:ro
+    networks:
+      - app-network
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: typing-game-server
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server:/app:ro
+      - /app/node_modules
+    networks:
+      - app-network
+    environment:
+      - NODE_ENV=production
+
+networks:
+  app-network:
+    driver: bridge
